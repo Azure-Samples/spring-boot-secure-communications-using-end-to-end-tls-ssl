@@ -30,6 +30,10 @@ az keyvault set-policy --name ${KEY_VAULT} \
 # Move to external service
 cd external-service
 
+# Compile and run
+mvn package
+mvn spring-boot:run
+
 # Deploy to Azure Container Instance
 
 az acr build -r ${CONTAINER_REGISTRY} \
