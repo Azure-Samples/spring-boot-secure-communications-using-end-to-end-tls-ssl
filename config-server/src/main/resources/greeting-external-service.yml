@@ -1,0 +1,11 @@
+application:
+    message: Hello, %s! - Configured by Spring Cloud Config Server%n
+
+server:
+  servlet:
+    context-path: /greeting-external
+  port: 7000
+
+feign:
+  hystrix:
+    enabled: true

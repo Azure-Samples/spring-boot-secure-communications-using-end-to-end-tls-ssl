@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">  
+    <modelVersion>4.0.0</modelVersion>  
+    <parent> 
+        <groupId>org.springframework.boot</groupId>  
+        <artifactId>spring-boot-starter-parent</artifactId>  
+        <version>2.3.0.RELEASE</version>
+        <relativePath/>  
+        <!-- lookup parent from repository --> 
+    </parent>  
+
+    <groupId>com.azure</groupId>
+    <artifactId>secure-external-service</artifactId>
+    <version>1.0.0</version>
+    <packaging>jar</packaging>
+
+    <name>${EXTERNAL_SERVICE_NAME}</name>
+    <description>Sample project for Azure Key Vault Certificates Starter</description>
+    <url>https://github.com/Azure/azure-sdk-for-java</url>
+
+    <properties> 
+        <java.version>1.8</java.version> 
+    </properties>  
+    <dependencies>
+
+        <!--
+        
+          Uncomment this if you want to use Webflux.
+          
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-webflux</artifactId>
+        </dependency>
+        
+        -->  
+        <dependency> 
+            <groupId>org.springframework.boot</groupId>  
+            <artifactId>spring-boot-starter-web</artifactId>  
+            <!--    
+            
+                Uncomment this is you are using Jetty / Undertow below.
+                            
+                <exclusions>
+                    <exclusion>
+                        <groupId>org.springframework.boot</groupId>
+                        <artifactId>spring-boot-starter-tomcat</artifactId>
+                    </exclusion>
+                </exclusions>
+            --> 
+        </dependency>  
+        <!--
+        
+            Uncomment this if you want to use Jetty.
+      
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-starter-jetty</artifactId>
+            </dependency>
+            
+        -->  
+        <!--
+        
+            Uncomment this if you want to use Undertow
+            
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-starter-undertow</artifactId>
+            </dependency>
+            
+        -->  
+        <dependency> 
+            <groupId>org.springframework.boot</groupId>  
+            <artifactId>spring-boot-starter-test</artifactId>  
+            <scope>test</scope>  
+            <exclusions> 
+                <exclusion> 
+                    <groupId>org.junit.vintage</groupId>  
+                    <artifactId>junit-vintage-engine</artifactId> 
+                </exclusion> 
+            </exclusions> 
+        </dependency>
+        <dependency>
+            <groupId>com.microsoft.azure</groupId>
+            <artifactId>azure-keyvault-certificates-spring-boot-starter</artifactId>
+            <version>2.4.0-beta.1</version> 
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-actuator</artifactId>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <finalName>app</finalName>
+        <plugins>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+                <configuration>
+                    <systemPropertyVariables>
+                        <KEY_VAULT_URI>${KEY_VAULT_URI}</KEY_VAULT_URI>
+                        <SERVER_SSL_CERTIFICATE_NAME>${SERVER_SSL_CERTIFICATE_NAME}</SERVER_SSL_CERTIFICATE_NAME>
+                        <EXTERNAL_SERVICE_PORT>${EXTERNAL_SERVICE_PORT}</EXTERNAL_SERVICE_PORT>
+                        <SERVICE_PRINCIPAL_TENANT_ID>${SERVICE_PRINCIPAL_TENANT_ID}</SERVICE_PRINCIPAL_TENANT_ID>
+                        <SERVICE_PRINCIPAL_CLIENT_ID>${SERVICE_PRINCIPAL_CLIENT_ID}</SERVICE_PRINCIPAL_CLIENT_ID>
+                        <SERVICE_PRINCIPAL_CLIENT_SECRET>${SERVICE_PRINCIPAL_CLIENT_SECRET}</SERVICE_PRINCIPAL_CLIENT_SECRET>
+                    </systemPropertyVariables>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build> 
+</project>

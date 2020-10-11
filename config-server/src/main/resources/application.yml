@@ -1,0 +1,20 @@
+server:
+  port: 8888
+  tomcat:
+    accesslog:
+      enabled: true
+      directory: "/dev"
+      prefix: stdout
+      buffered: false
+      suffix:
+      file-date-format:
+      request-attributes-enabled: true
+      pattern: "[ACCESS] %h %l %u %t %r %s %b"
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+    shutdown:
+      enabled: true
