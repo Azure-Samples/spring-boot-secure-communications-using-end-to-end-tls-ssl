@@ -9,6 +9,16 @@ az acr create --name ${CONTAINER_REGISTRY} \
 # Create Service Principal
 az ad sp create-for-rbac --name ${SERVICE_PRINCIPAL_NAME} --sdk-auth > .scripts/my.azureauth
 
+# Must capture the value of these environment variables manually after creating Service Principal
+# (from .scripts/my.azureauth file)
+# (in file .scripts/setup-env-variables-azure.sh)
+# export SERVICE_PRINCIPAL_TENANT_ID=
+# export SERVICE_PRINCIPAL_CLIENT_ID=
+# export SERVICE_PRINCIPAL_CLIENT_SECRET=
+
+# Re-run bash file
+# source .scripts/setup-env-variables-azure.sh
+
 export SERVICE_PRINCIPAL_OBJECT_ID=$(az ad sp show --id ${SERVICE_PRINCIPAL_NAME} \
     --query objectId --output tsv)
 
