@@ -56,8 +56,7 @@ az container create --name ${EXTERNAL_SERVICE_NAME} \
     'EXTERNAL_SERVICE_PORT'=${EXTERNAL_SERVICE_PORT} \
   --ip-address Public \
   --ports ${EXTERNAL_SERVICE_PORT} \
-  --query "ipAddress.ip" \
-  --command-line "tail -f /dev/null"
+  --query "ipAddress.ip"
 
 # Start container instance
 az container start --name ${EXTERNAL_SERVICE_NAME}
