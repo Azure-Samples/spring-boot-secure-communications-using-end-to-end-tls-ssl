@@ -6,53 +6,61 @@ az acr create --name ${CONTAINER_REGISTRY} \
     --sku basic --location ${REGION} \
     --admin-enabled true
 
-# Create Service Principal
-az ad sp create-for-rbac --name ${SERVICE_PRINCIPAL_NAME} --sdk-auth > .scripts/my.azureauth
-
-# Must capture the value of these environment variables manually after creating Service Principal
-# (from .scripts/my.azureauth file)
-# (in file .scripts/setup-env-variables-azure.sh)
-# export SERVICE_PRINCIPAL_TENANT_ID=
-# export SERVICE_PRINCIPAL_CLIENT_ID=
-# export SERVICE_PRINCIPAL_CLIENT_SECRET=
-
-# Re-run bash file
-# source .scripts/setup-env-variables-azure.sh
-
-export SERVICE_PRINCIPAL_OBJECT_ID=$(az ad sp show --id ${SERVICE_PRINCIPAL_NAME} \
-    --query objectId --output tsv)
-
-az keyvault set-policy --name ${KEY_VAULT} \
-    --object-id ${SERVICE_PRINCIPAL_OBJECT_ID} \
-    --certificate-permissions get list \
-    --key-permissions get list --secret-permissions get list
+export RESOURCE_GROUP_ID=$(az group show --name ${RESOURCE_GROUP} --query id --output tsv)
 
 # Move to external service
 cd external-service
 
 # Compile and run
 mvn package
-mvn spring-boot:run
 
-# Deploy to Azure Container Instance
-
+# Build and push image to Azure Container Registry
 az acr build -r ${CONTAINER_REGISTRY} \
     -t "${CONTAINER_REGISTRY}.azurecr.io/${EXTERNAL_SERVICE_NAME}" .
 
+# Deploy to Azure Container Instance
 az container create --name ${EXTERNAL_SERVICE_NAME} \
   --image "${CONTAINER_REGISTRY}.azurecr.io/${EXTERNAL_SERVICE_NAME}"  \
   --registry-password "$(az acr credential show -n ${CONTAINER_REGISTRY} --query "passwords[0].value" -o tsv)" \
   --registry-username "${CONTAINER_REGISTRY}" \
+  --assign-identity --scope ${RESOURCE_GROUP_ID} \
   --environment-variables 'KEY_VAULT_URI'=${KEY_VAULT_URI} \
     'SERVER_SSL_CERTIFICATE_NAME'=${SERVER_SSL_CERTIFICATE_NAME} \
     'EXTERNAL_SERVICE_PORT'=${EXTERNAL_SERVICE_PORT} \
-    'SERVICE_PRINCIPAL_TENANT_ID'=${SERVICE_PRINCIPAL_TENANT_ID} \
-    'SERVICE_PRINCIPAL_CLIENT_ID'=${SERVICE_PRINCIPAL_CLIENT_ID} \
-    'SERVICE_PRINCIPAL_CLIENT_SECRET'=${SERVICE_PRINCIPAL_CLIENT_SECRET} \
   --ip-address Public \
   --ports ${EXTERNAL_SERVICE_PORT} \
   --query "ipAddress.ip" \
   --command-line "tail -f /dev/null"
+
+# Retrieve System Assigned Managed Identity
+export EXTERNAL_SERVICE_SYSTEM_ASSIGNED_MANAGED_IDENTITY_SERVICE_PRINCIPAL=$(az container show --name ${EXTERNAL_SERVICE_NAME} \
+    | jq -r '.identity.principalId')
+
+# Grant System Assigned Managed Idetity with access to Key Vault
+az keyvault set-policy --name ${KEY_VAULT} \
+    --object-id ${EXTERNAL_SERVICE_SYSTEM_ASSIGNED_MANAGED_IDENTITY_SERVICE_PRINCIPAL} \
+    --certificate-permissions get list \
+    --key-permissions get list --secret-permissions get list
+
+# Stop the container instance
+az container stop --name ${EXTERNAL_SERVICE_NAME}
+
+# Wait for 5 minutes and redeploy :-)
+az container create --name ${EXTERNAL_SERVICE_NAME} \
+  --image "${CONTAINER_REGISTRY}.azurecr.io/${EXTERNAL_SERVICE_NAME}"  \
+  --registry-password "$(az acr credential show -n ${CONTAINER_REGISTRY} --query "passwords[0].value" -o tsv)" \
+  --registry-username "${CONTAINER_REGISTRY}" \
+  --assign-identity --scope ${RESOURCE_GROUP_ID} \
+  --environment-variables 'KEY_VAULT_URI'=${KEY_VAULT_URI} \
+    'SERVER_SSL_CERTIFICATE_NAME'=${SERVER_SSL_CERTIFICATE_NAME} \
+    'EXTERNAL_SERVICE_PORT'=${EXTERNAL_SERVICE_PORT} \
+  --ip-address Public \
+  --ports ${EXTERNAL_SERVICE_PORT} \
+  --query "ipAddress.ip" \
+  --command-line "tail -f /dev/null"
+
+# Start container instance
+az container start --name ${EXTERNAL_SERVICE_NAME}
 
 export EXTERNAL_SERVICE_ENDPOINT=$(az container show --name ${EXTERNAL_SERVICE_NAME} \
     | jq -r '.ipAddress.ip')

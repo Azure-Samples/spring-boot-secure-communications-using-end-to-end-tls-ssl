@@ -36,7 +36,19 @@ export IMAGE_TAG=prod
 
 # Customize EXTERNAL_SERVICE_NAME - set your name for the external service
 export EXTERNAL_SERVICE_NAME=external-service
+# RESOURCE_GROUP_ID will be auto-set by the script
+export RESOURCE_GROUP_ID=
+# EXTERNAL_SERVICE_SYSTEM_ASSIGNED_MANAGED_IDENTITY_SERVICE_PRINCIPAL will be auto-set by the script
+export EXTERNAL_SERVICE_SYSTEM_ASSIGNED_MANAGED_IDENTITY_SERVICE_PRINCIPAL=
 
+# EXTERNAL_SERVICE_ENDPOINT will be auto-set by the script
+export EXTERNAL_SERVICE_ENDPOINT=
+export EXTERNAL_SERVICE_PORT=443
+
+
+
+# ==== IGNORE ====
+# ==== Reserved for the future IGNORE for now ====
 export SERVICE_PRINCIPAL_NAME=http://App-for-reading-${KEY_VAULT}
 # SERVICE_PRINCIPAL_OBJECT_ID will be auto-set by the script
 export SERVICE_PRINCIPAL_OBJECT_ID=
@@ -46,11 +58,7 @@ export SERVICE_PRINCIPAL_TENANT_ID=
 export SERVICE_PRINCIPAL_CLIENT_ID=
 export SERVICE_PRINCIPAL_CLIENT_SECRET=
 
-# EXTERNAL_SERVICE_ENDPOINT will be auto-set by the script
-export EXTERNAL_SERVICE_ENDPOINT=
-export EXTERNAL_SERVICE_PORT=443
-
-# ==== Reserved for the future ====
+# Use Managed Identity
 export EXTERNAL_SERVICE_MANAGED_IDENTITY_NAME=external-service
 # EXTERNAL_SERVICE_MANAGED_IDENTITY_SERVICE_PRINCIPAL will be auto-set by the script
 export EXTERNAL_SERVICE_MANAGED_IDENTITY_SERVICE_PRINCIPAL=
