@@ -42,6 +42,7 @@ az spring-cloud config-server set \
 
 # ==== Import custom domain certificate ====
 
+# First grant Azure Spring Cloud Domain Manager access to Key Vault
 az ad sp show --id 03b39d0f-4213-4864-a245-b1476ec03169 --query objectId
 
 az keyvault set-policy --name ${KEY_VAULT} \
