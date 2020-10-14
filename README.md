@@ -20,7 +20,7 @@ Spring Boot apps to Azure Kubernetes Service, App Service or Virtual Machines.
 You will:
 - Deploy Spring Boot micro services
 - Secure communications using end-to-end TLS/SSL
-- Use Azure Key Vault to realize zero-trust model
+- Use Azure Key Vault to realize zero-trust model.
 
 ## What you will need
 
@@ -83,7 +83,7 @@ You can secure communications using end-to-end TLS/SSL in Azure Spring Cloud. Pi
 | 4 | Spring Cloud Gateway to Spring Boot app (app to app)           |
 | 5 | Spring Boot app to external systems                            |
 
-You can achieve segments 1 and 3-5. Support for segment 2 will be released soon.
+You can secure all these segments, except 2, and support for segment 2 will be released shortly.
 
 ## Install - Azure CLI extension
 
@@ -147,7 +147,7 @@ source .scripts/setup-env-variables-azure.sh
 
 Login to the Azure CLI and choose your active subscription.
 ```bash
-    az login
+az login
 ```
 
 ### Create Azure Key Vault and Certificates
