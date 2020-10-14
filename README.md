@@ -101,6 +101,7 @@ Install the preview versions of [JCA Provider for Azure Key Vault](https://githu
 ```bash
 pushd ..
 git clone https://github.com/selvasingh/azure-sdk-for-java.git
+cd azure-sdk-for-java
 git checkout end-to-end-tls-ssl
 
 # Install JCA Provider for Azure Key Vault
@@ -202,14 +203,11 @@ source .scripts/deploy-external-service.sh
 Create Azure Spring Cloud and apply config.
 ```bash
 # ==== Create Azure Spring Cloud ====
-az spring-cloud create --name ${SPRING_CLOUD_SERVICE} \
-    --resource-group ${RESOURCE_GROUP} \
+az spring-cloud create --name ${SPRING_CLOUD_SERVICE} --resource-group ${RESOURCE_GROUP} \
     --location ${REGION}
 
 # ==== Apply Config ====
-az spring-cloud config-server set \
-    --config-file application.yml \
-    --name ${SPRING_CLOUD_SERVICE}
+az spring-cloud config-server set --config-file application.yml --name ${SPRING_CLOUD_SERVICE}
 ```
 
 Optionally, you may import the custom domain into Azure Spring Cloud.
@@ -299,11 +297,9 @@ Deploy `gateway`, `greeting-service` and `greeting-external-service` to Azure Sp
 mvn clean package -DskipTests -Denv=cloud
 
 # ==== Deploy apps ====
-az spring-cloud app deploy --name gateway \
-    --jar-path ${GATEWAY_JAR}
+az spring-cloud app deploy --name gateway --jar-path ${GATEWAY_JAR}
 
-az spring-cloud app deploy --name greeting-service \
-    --jar-path ${GREETING_SERVICE_JAR}
+az spring-cloud app deploy --name greeting-service --jar-path ${GREETING_SERVICE_JAR}
 
 az spring-cloud app deploy --name greeting-external-service \
     --jar-path ${GREETING_EXTERNAL_SERVICE_JAR}
