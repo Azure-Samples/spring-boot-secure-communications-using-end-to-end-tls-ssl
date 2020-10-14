@@ -63,10 +63,10 @@ To securely load certificates into Spring Boot apps, we are using
 the [Spring Boot Key Vault Certificates Starter](https://github.com/selvasingh/azure-sdk-for-java/tree/end-to-end-tls-ssl/sdk/spring/azure-spring-boot-starter-keyvault-certificates).
 
 ```xml
-   <dependency>
-       <groupId>com.microsoft.azure</groupId>
-       <artifactId>azure-keyvault-certificates-spring-boot-starter</artifactId>
-   </dependency>
+<dependency>
+   <groupId>com.microsoft.azure</groupId>
+   <artifactId>azure-keyvault-certificates-spring-boot-starter</artifactId>
+</dependency>
 ```
 
 ## Azure Spring Cloud
@@ -90,7 +90,7 @@ You can achieve segments 1 and 3-5. Support for segment 2 will be released soon.
 Install the Azure Spring Cloud extension for the Azure CLI using the following command.
 
 ```bash
-    az extension add --name spring-cloud
+az extension add --name spring-cloud
 ```
 
 ## Install - Spring Boot Key Vault Certificates Starter
@@ -99,18 +99,19 @@ Install the preview versions of [JCA Provider for Azure Key Vault](https://githu
  [Spring Boot Key Vault Certificates Starter](https://github.com/selvasingh/azure-sdk-for-java/tree/end-to-end-tls-ssl/sdk/spring/azure-spring-boot-starter-keyvault-certificates).
 
 ```bash
-    pushd ..
-    git clone https://github.com/selvasingh/azure-sdk-for-java.git
-    git checkout end-to-end-tls-ssl
-    
-    # Install JCA Provider for Azure Key Vault
-    cd azure-sdk-for-java/sdk/keyvault/azure-security-keyvault-jca
-    mvn clean install -DskipTests=true
-    
-    # Install Spring Boot Key Vault Certificates Starter
-    cd azure-sdk-for-java/sdk/spring/azure-spring-boot-starter-keyvault-certificates
-    mvn clean install -DskipTests=true
-    popd
+pushd ..
+git clone https://github.com/selvasingh/azure-sdk-for-java.git
+git checkout end-to-end-tls-ssl
+
+# Install JCA Provider for Azure Key Vault
+cd azure-sdk-for-java/sdk/keyvault/azure-security-keyvault-jca
+mvn clean install -DskipTests=true
+
+# Install Spring Boot Key Vault Certificates Starter
+cd ../../..
+cd azure-sdk-for-java/sdk/spring/azure-spring-boot-starter-keyvault-certificates
+mvn clean install -DskipTests=true
+popd
 ```
 ## Deploy Spring Boot Apps
 
@@ -120,26 +121,26 @@ Let's start ...
 
 Create a bash script with environment variables by making a copy of the supplied template.
 ```bash
-    cp .scripts/setup-env-variables-azure-template.sh .scripts/setup-env-variables-azure.sh
+cp .scripts/setup-env-variables-azure-template.sh .scripts/setup-env-variables-azure.sh
 ```
 
 Open `.scripts/setup-env-variables-azure.sh` and enter the following information:
 ```bash
 
-    # Customize SPRING_CLOUD_SERVICE - set your name for Azure Spring Cloud
-    export SPRING_CLOUD_SERVICE=secure
-    
-    # Customize KEY_VAULT value - set your name for Key Vault
-    export KEY_VAULT=certs-2020
-    
-    # Customize CUSTOM_DOMAIN - set your custom domain for the main entry gateway
-    export CUSTOM_DOMAIN=secure-gateway.spring-microservices.com
+# Customize SPRING_CLOUD_SERVICE - set your name for Azure Spring Cloud
+export SPRING_CLOUD_SERVICE=secure
+
+# Customize KEY_VAULT value - set your name for Key Vault
+export KEY_VAULT=certs-2020
+
+# Customize CUSTOM_DOMAIN - set your custom domain for the main entry gateway
+export CUSTOM_DOMAIN=secure-gateway.spring-microservices.com
 
 ```
 
 Then, set the environment:
 ```bash
-    source .scripts/setup-env-variables-azure.sh
+source .scripts/setup-env-variables-azure.sh
 ```
 
 ### Login to Azure 
@@ -153,25 +154,25 @@ Login to the Azure CLI and choose your active subscription.
 
 Create a Resource Group and configure defaults.
 ```bash
-    # ==== Create Resource Group ====
-    az group create --name ${RESOURCE_GROUP} \
-        --location ${REGION}
-    
-    az configure --defaults \
-        group=${RESOURCE_GROUP} \
-        location=${REGION} \
-        spring-cloud=${SPRING_CLOUD_SERVICE}
+# ==== Create Resource Group ====
+az group create --name ${RESOURCE_GROUP} \
+    --location ${REGION}
+
+az configure --defaults \
+    group=${RESOURCE_GROUP} \
+    location=${REGION} \
+    spring-cloud=${SPRING_CLOUD_SERVICE}
  ```
 
 Create a Key Vault and self-signed certificate.
 ```bash
-    # ==== Create Key Vault, self-signed certificate ====
-    az keyvault create --name ${KEY_VAULT} -g ${RESOURCE_GROUP}
-    export KEY_VAULT_URI=$(az keyvault show --name ${KEY_VAULT} | jq -r '.properties.vaultUri')
-    
-    az keyvault certificate create --vault-name ${KEY_VAULT} \
-        -n ${SERVER_SSL_CERTIFICATE_NAME} \
-        -p "$(az keyvault certificate get-default-policy)"
+# ==== Create Key Vault, self-signed certificate ====
+az keyvault create --name ${KEY_VAULT} -g ${RESOURCE_GROUP}
+export KEY_VAULT_URI=$(az keyvault show --name ${KEY_VAULT} | jq -r '.properties.vaultUri')
+
+az keyvault certificate create --vault-name ${KEY_VAULT} \
+    -n ${SERVER_SSL_CERTIFICATE_NAME} \
+    -p "$(az keyvault certificate get-default-policy)"
 ```
 
 Optionally, you may turn on [custom domain and TLS/SSL for segment 1](https://docs.microsoft.com/en-us/azure/spring-cloud/spring-cloud-tutorial-custom-domain?tabs=Azure-portal), 
@@ -181,11 +182,11 @@ certificate artifacts for `Apache`.
 - Convert the certificate into a format accepted by Key Vault.
 - Import the converted certificate into Key Vault.
 ```bash
-    # ==== You may have to merge certificates into 1 file ====
-    openssl pkcs12 -export -out myserver2.pfx -inkey privatekey.key -in mergedcert2.crt
-    az keyvault certificate import --file myserver2.pfx \
-        --name ${CUSTOM_DOMAIN_CERTIFICATE_NAME} 
-        --vault-name ${KEY_VAULT} --password 123456
+# ==== You may have to merge certificates into 1 file ====
+openssl pkcs12 -export -out myserver2.pfx -inkey privatekey.key -in mergedcert2.crt
+az keyvault certificate import --file myserver2.pfx \
+    --name ${CUSTOM_DOMAIN_CERTIFICATE_NAME} 
+    --vault-name ${KEY_VAULT} --password 123456
 ```
 
 ### Deploy External Service
@@ -193,100 +194,100 @@ certificate artifacts for `Apache`.
 Deploy the `external-service` to Azure Container Instances and turn on TLS/SSL 
 using certificates managed by Key Vault.
 ```bash
-    source .scripts/deploy-external-service.sh
+source .scripts/deploy-external-service.sh
 ```
 
 ### Create Azure Spring Cloud
 
 Create Azure Spring Cloud and apply config.
 ```bash
-    # ==== Create Azure Spring Cloud ====
-    az spring-cloud create --name ${SPRING_CLOUD_SERVICE} \
-        --resource-group ${RESOURCE_GROUP} \
-        --location ${REGION}
-    
-    # ==== Apply Config ====
-    az spring-cloud config-server set \
-        --config-file application.yml \
-        --name ${SPRING_CLOUD_SERVICE}
+# ==== Create Azure Spring Cloud ====
+az spring-cloud create --name ${SPRING_CLOUD_SERVICE} \
+    --resource-group ${RESOURCE_GROUP} \
+    --location ${REGION}
+
+# ==== Apply Config ====
+az spring-cloud config-server set \
+    --config-file application.yml \
+    --name ${SPRING_CLOUD_SERVICE}
 ```
 
 Optionally, you may import the custom domain into Azure Spring Cloud.
 ```bash
-    # ==== Import custom domain certificate ====
-    # First grant Azure Spring Cloud Domain Manager access to Key Vault
-    az ad sp show --id 03b39d0f-4213-4864-a245-b1476ec03169 --query objectId
-    
-    az keyvault set-policy --name ${KEY_VAULT} \
-        --object-id 938df8e2-2b9d-40b1-940c-c75c33494239 \
-        --certificate-permissions get list \
-        --secret-permissions get list
-    
-    az spring-cloud certificate add --name ${CUSTOM_DOMAIN_CERTIFICATE_NAME} \
-        --vault-uri ${KEY_VAULT_URI} \
-        --vault-certificate-name ${CUSTOM_DOMAIN_CERTIFICATE_NAME}
+# ==== Import custom domain certificate ====
+# First grant Azure Spring Cloud Domain Manager access to Key Vault
+az ad sp show --id 03b39d0f-4213-4864-a245-b1476ec03169 --query objectId
+
+az keyvault set-policy --name ${KEY_VAULT} \
+    --object-id 938df8e2-2b9d-40b1-940c-c75c33494239 \
+    --certificate-permissions get list \
+    --secret-permissions get list
+
+az spring-cloud certificate add --name ${CUSTOM_DOMAIN_CERTIFICATE_NAME} \
+    --vault-uri ${KEY_VAULT_URI} \
+    --vault-certificate-name ${CUSTOM_DOMAIN_CERTIFICATE_NAME}
 ```
 
 ### Create Apps in Azure Spring Cloud
 
 Create `gateway` app.
 ```bash
-    # ==== Create the gateway app ====
-    az spring-cloud app create --name gateway --instance-count 1 --is-public true \
-        --memory 2 \
-        --jvm-options='-Xms2048m -Xmx2048m -XX:+UnlockExperimentalVMOptions -XX:+UseCGroupMemoryLimitForHeap -XX:+UseG1GC -Djava.awt.headless=true' \
-        --env KEY_VAULT_URI=${KEY_VAULT_URI} \
-              CLIENT_SSL_CERTIFICATE_NAME=${CLIENT_SSL_CERTIFICATE_NAME} \
-              GREETING_SERVICE=${GREETING_SERVICE} \
-              GREETING_EXTERNAL_SERVICE=${GREETING_EXTERNAL_SERVICE}
-    
-    export SECURE_GATEWAY_URL=$(az spring-cloud app show --name gateway | jq -r '.properties.url')
+# ==== Create the gateway app ====
+az spring-cloud app create --name gateway --instance-count 1 --is-public true \
+    --memory 2 \
+    --jvm-options='-Xms2048m -Xmx2048m -XX:+UnlockExperimentalVMOptions -XX:+UseCGroupMemoryLimitForHeap -XX:+UseG1GC -Djava.awt.headless=true' \
+    --env KEY_VAULT_URI=${KEY_VAULT_URI} \
+          CLIENT_SSL_CERTIFICATE_NAME=${CLIENT_SSL_CERTIFICATE_NAME} \
+          GREETING_SERVICE=${GREETING_SERVICE} \
+          GREETING_EXTERNAL_SERVICE=${GREETING_EXTERNAL_SERVICE}
+
+export SECURE_GATEWAY_URL=$(az spring-cloud app show --name gateway | jq -r '.properties.url')
 ```
 
 Optionally, if you are using a custom domain for the `gateway` app, then bind the domain and 
 add a DNS record with your domain service to map the domain name to
 `${SECURE_GATEWAY_URL}`.
 ```bash
-    # ==== Bind custom domain ====
-    az spring-cloud app custom-domain bind --ap gateway \
-        --domain-name ${CUSTOM_DOMAIN_NAME} --certificate ${CUSTOM_DOMAIN_CERTIFICATE_NAME}
-    # ==== Manual step to add a DNS record to map domain name to ${SECURE_GATEWAY_URL}
+# ==== Bind custom domain ====
+az spring-cloud app custom-domain bind --ap gateway \
+    --domain-name ${CUSTOM_DOMAIN_NAME} --certificate ${CUSTOM_DOMAIN_CERTIFICATE_NAME}
+# ==== Manual step to add a DNS record to map domain name to ${SECURE_GATEWAY_URL}
 ```
 
 Create `greeting-service` and `greeting-external-service` apps, enable managed identities and
 grant them access to the Key Vault where certificates are stored.
 ```bash
-    # ==== Create the greeting-service app ====
-    az spring-cloud app create --name greeting-service --instance-count 1 \
-        --memory 2 \
-        --jvm-options='-Xms2048m -Xmx2048m -XX:+UnlockExperimentalVMOptions -XX:+UseCGroupMemoryLimitForHeap -XX:+UseG1GC -Djava.awt.headless=true' \
-        --env KEY_VAULT_URI=${KEY_VAULT_URI} \
-              SERVER_SSL_CERTIFICATE_NAME=${SERVER_SSL_CERTIFICATE_NAME}
-    
-    az spring-cloud app identity assign --name greeting-service
-    export GREETING_SERVICE_IDENTITY=$(az spring-cloud app show --name greeting-service | \
-        jq -r '.identity.principalId')
-    
-    az keyvault set-policy --name ${KEY_VAULT} \
-       --object-id ${GREETING_SERVICE_IDENTITY} --certificate-permissions get list \
-       --key-permissions get list --secret-permissions get list
-    
-    # ==== Create the greeting-external-service app ====
-    az spring-cloud app create --name greeting-external-service --instance-count 1 \
-        --memory 2 \
-        --jvm-options='-Xms2048m -Xmx2048m -XX:+UnlockExperimentalVMOptions -XX:+UseCGroupMemoryLimitForHeap -XX:+UseG1GC -Djava.awt.headless=true' \
-        --env KEY_VAULT_URI=${KEY_VAULT_URI} \
-              SERVER_SSL_CERTIFICATE_NAME=${SERVER_SSL_CERTIFICATE_NAME} \
-              EXTERNAL_SERVICE_ENDPOINT=${EXTERNAL_SERVICE_ENDPOINT} \
-              EXTERNAL_SERVICE_PORT=${EXTERNAL_SERVICE_PORT}
-    
-    az spring-cloud app identity assign --name greeting-external-service
-    export GREETING_EXTERNAL_SERVICE_IDENTITY=$(az spring-cloud app show \
-        --name greeting-external-service| jq -r '.identity.principalId')
-    
-    az keyvault set-policy --name ${KEY_VAULT} \
-       --object-id ${GREETING_EXTERNAL_SERVICE_IDENTITY} --certificate-permissions get list \
-       --key-permissions get list --secret-permissions get list
+# ==== Create the greeting-service app ====
+az spring-cloud app create --name greeting-service --instance-count 1 \
+    --memory 2 \
+    --jvm-options='-Xms2048m -Xmx2048m -XX:+UnlockExperimentalVMOptions -XX:+UseCGroupMemoryLimitForHeap -XX:+UseG1GC -Djava.awt.headless=true' \
+    --env KEY_VAULT_URI=${KEY_VAULT_URI} \
+          SERVER_SSL_CERTIFICATE_NAME=${SERVER_SSL_CERTIFICATE_NAME}
+
+az spring-cloud app identity assign --name greeting-service
+export GREETING_SERVICE_IDENTITY=$(az spring-cloud app show --name greeting-service | \
+    jq -r '.identity.principalId')
+
+az keyvault set-policy --name ${KEY_VAULT} \
+   --object-id ${GREETING_SERVICE_IDENTITY} --certificate-permissions get list \
+   --key-permissions get list --secret-permissions get list
+
+# ==== Create the greeting-external-service app ====
+az spring-cloud app create --name greeting-external-service --instance-count 1 \
+    --memory 2 \
+    --jvm-options='-Xms2048m -Xmx2048m -XX:+UnlockExperimentalVMOptions -XX:+UseCGroupMemoryLimitForHeap -XX:+UseG1GC -Djava.awt.headless=true' \
+    --env KEY_VAULT_URI=${KEY_VAULT_URI} \
+          SERVER_SSL_CERTIFICATE_NAME=${SERVER_SSL_CERTIFICATE_NAME} \
+          EXTERNAL_SERVICE_ENDPOINT=${EXTERNAL_SERVICE_ENDPOINT} \
+          EXTERNAL_SERVICE_PORT=${EXTERNAL_SERVICE_PORT}
+
+az spring-cloud app identity assign --name greeting-external-service
+export GREETING_EXTERNAL_SERVICE_IDENTITY=$(az spring-cloud app show \
+    --name greeting-external-service| jq -r '.identity.principalId')
+
+az keyvault set-policy --name ${KEY_VAULT} \
+   --object-id ${GREETING_EXTERNAL_SERVICE_IDENTITY} --certificate-permissions get list \
+   --key-permissions get list --secret-permissions get list
 ```
 
 ### Deploy apps to Azure Spring Cloud
@@ -294,26 +295,26 @@ grant them access to the Key Vault where certificates are stored.
 Deploy `gateway`, `greeting-service` and `greeting-external-service` to Azure Spring Cloud.
 
 ```bash
-    # ==== Build for cloud ====
-    mvn clean package -DskipTests -Denv=cloud
-    
-    # ==== Deploy apps ====
-    az spring-cloud app deploy --name gateway \
-        --jar-path ${GATEWAY_JAR}
-    
-    az spring-cloud app deploy --name greeting-service \
-        --jar-path ${GREETING_SERVICE_JAR}
-    
-    az spring-cloud app deploy --name greeting-external-service \
-        --jar-path ${GREETING_EXTERNAL_SERVICE_JAR}
+# ==== Build for cloud ====
+mvn clean package -DskipTests -Denv=cloud
+
+# ==== Deploy apps ====
+az spring-cloud app deploy --name gateway \
+    --jar-path ${GATEWAY_JAR}
+
+az spring-cloud app deploy --name greeting-service \
+    --jar-path ${GREETING_SERVICE_JAR}
+
+az spring-cloud app deploy --name greeting-external-service \
+    --jar-path ${GREETING_EXTERNAL_SERVICE_JAR}
 ```
 
 ## Open Spring Boot Apps Secured Using End-to-end TLS/SSL
 
 Let's open the app and test it.
 ```bash
-    open ${SECURE_GATEWAY_URL}/greeting/hello/Manfred-Riem
-    open ${SECURE_GATEWAY_URL}/greeting/hello-external/Asir-Selvasingh
+open ${SECURE_GATEWAY_URL}/greeting/hello/Manfred-Riem
+open ${SECURE_GATEWAY_URL}/greeting/hello-external/Asir-Selvasingh
 ```
 
 ![](./media/segment-4-tls-ssl.jpg)
