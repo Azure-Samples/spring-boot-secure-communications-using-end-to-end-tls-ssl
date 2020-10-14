@@ -156,12 +156,9 @@ az login
 Create a Resource Group and configure defaults.
 ```bash
 # ==== Create Resource Group ====
-az group create --name ${RESOURCE_GROUP} \
-    --location ${REGION}
+az group create --name ${RESOURCE_GROUP} --location ${REGION}
 
-az configure --defaults \
-    group=${RESOURCE_GROUP} \
-    location=${REGION} \
+az configure --defaults group=${RESOURCE_GROUP} location=${REGION} \
     spring-cloud=${SPRING_CLOUD_SERVICE}
  ```
 
