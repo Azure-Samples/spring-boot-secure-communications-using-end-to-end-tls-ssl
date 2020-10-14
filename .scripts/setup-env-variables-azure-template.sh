@@ -16,6 +16,8 @@ export GATEWAY_JAR=gateway/target/gateway-1.0.0.jar
 # ==== Spring Cloud Gateway service names ====
 export GREETING_SERVICE=greeting-service:80
 export GREETING_EXTERNAL_SERVICE=greeting-external-service:80
+# SECURE_GATEWAY will be auto-set by the script
+export SECURE_GATEWAY_URL=
 
 # ==== Key Vault ====
 # Customize KEY_VAULT value - set your name for Key Vault
@@ -27,14 +29,12 @@ export CLIENT_SSL_CERTIFICATE_NAME=self-signed
 # ==== Custom Domain ====
 # Customize CUSTOM_DOMAIN - set your custom domain for the main entry gateway
 export CUSTOM_DOMAIN=secure-gateway.spring-microservices.com
-# Customize CUSTOM_DOMAIN_CERTIFICATE_NAME - set your custom domain certificate name for the main entry gateway
 export CUSTOM_DOMAIN_CERTIFICATE_NAME=secure-gateway
 
 # ==== External Service ====
 export CONTAINER_REGISTRY=springbootimages
 export IMAGE_TAG=prod
 
-# Customize EXTERNAL_SERVICE_NAME - set your name for the external service
 export EXTERNAL_SERVICE_NAME=external-service
 # RESOURCE_GROUP_ID will be auto-set by the script
 export RESOURCE_GROUP_ID=

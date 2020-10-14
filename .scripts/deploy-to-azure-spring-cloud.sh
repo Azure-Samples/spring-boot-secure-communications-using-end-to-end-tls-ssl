@@ -26,9 +26,9 @@ az keyvault certificate create --vault-name ${KEY_VAULT} \
     -n ${SERVER_SSL_CERTIFICATE_NAME} \
     -p "$(az keyvault certificate get-default-policy)"
 
-# purchase an App Service Certificate - manual step through portal
+# purchase a certificate from an SSL certificate shop - manual step through portal
 
-# add certificate to Key Vault - manual step through portal
+# add the certificate to Key Vault - manual step through portal
 
 # ==== Create Azure Spring Cloud ====
 az spring-cloud create --name ${SPRING_CLOUD_SERVICE} \
@@ -47,7 +47,8 @@ az ad sp show --id 03b39d0f-4213-4864-a245-b1476ec03169 --query objectId
 
 az keyvault set-policy --name ${KEY_VAULT} \
     --object-id 938df8e2-2b9d-40b1-940c-c75c33494239 \
-     --certificate-permissions get list
+    --certificate-permissions get list \
+    --secret-permissions get list
 
 az spring-cloud certificate add --name ${CUSTOM_DOMAIN_CERTIFICATE_NAME} \
     --vault-uri ${KEY_VAULT_URI} \
@@ -62,10 +63,12 @@ az spring-cloud app create --name gateway --instance-count 1 --is-public true \
           GREETING_SERVICE=${GREETING_SERVICE} \
           GREETING_EXTERNAL_SERVICE=${GREETING_EXTERNAL_SERVICE}
 
+export SECURE_GATEWAY_URL=$(az spring-cloud app show --name gateway | jq -r '.properties.url')
+
 # Map custom domain to gateway - manual DNS entry step
 
 
-# Bind custom domain
+# ==== Bind custom domain ====
 az spring-cloud app custom-domain bind --ap gateway \
     --domain-name ${CUSTOM_DOMAIN_NAME} --certificate ${CUSTOM_DOMAIN_CERTIFICATE_NAME}
 
