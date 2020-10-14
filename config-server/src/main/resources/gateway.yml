@@ -1,0 +1,18 @@
+spring:
+  cloud:
+    gateway:
+      httpclient:
+        ssl:
+          useInsecureTrustManager: true
+      routes:
+        - id: greeting
+          uri: https://greeting-service:6000/
+          predicates:
+            - Path=/greeting/**
+        - id: netty
+          uri: https://greeting-external-service:7000/
+          predicates:
+            - Path=/greeting-external/**
+
+server:
+  port: 4000

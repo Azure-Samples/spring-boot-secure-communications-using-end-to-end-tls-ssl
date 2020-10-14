@@ -1,0 +1,77 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<groupId>com.secure</groupId>
+	<artifactId>secure-spring-microservices</artifactId>
+	<version>1.0.0</version>
+	<packaging>pom</packaging>
+	<name>secure-spring-microservices</name>
+
+	<parent>
+		<groupId>org.springframework.boot</groupId>
+		<artifactId>spring-boot-starter-parent</artifactId>
+		<version>2.3.0.RELEASE</version>
+		<relativePath/> <!-- lookup parent from repository -->
+	</parent>
+
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<java.version>1.8</java.version>
+		<spring-cloud.version>Hoxton.SR8</spring-cloud.version>
+	</properties>
+
+	<dependencyManagement>
+		<dependencies>
+			<dependency>
+				<groupId>org.springframework.cloud</groupId>
+				<artifactId>spring-cloud-dependencies</artifactId>
+				<version>${spring-cloud.version}</version>
+				<type>pom</type>
+				<scope>import</scope>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
+
+	<profiles>
+
+		<profile>
+			<id>dev</id>
+			<activation>
+				<property>
+					<name>env</name>
+					<value>development</value>
+				</property>
+			</activation>
+		</profile>
+
+		<profile>
+			<id>cloud</id>
+			<activation>
+				<property>
+					<name>env</name>
+					<value>cloud</value>
+				</property>
+			</activation>
+            <!--
+			<dependencies>
+				<dependency>
+					<groupId>com.microsoft.azure</groupId>
+					<artifactId>spring-cloud-starter-azure-spring-cloud-client</artifactId>
+					<version>2.2.0</version>
+				</dependency>
+			</dependencies>
+			-->
+		</profile>
+
+	</profiles>
+
+	<modules>
+		<module>config-server</module>
+		<module>service-registry</module>
+		<module>greeting-service</module>
+		<module>greeting-external-service</module>
+		<module>gateway</module>
+	</modules>
+
+</project>

@@ -1,0 +1,10 @@
+spring:
+  cloud:
+    config:
+      server:
+        git:
+          uri: https://github.com/Azure-Samples/spring-boot-secure-communications-using-end-to-end-tls-ssl-config.git
+        native:
+          search-locations: classpath:.
+  profiles:
+    active: native

@@ -1,0 +1,23 @@
+spring:
+  application:
+    name: greeting-service
+  cloud:
+    config:
+      uri: ${CONFIG_SERVER_URI}
+
+azure:
+  keyvault:
+    uri: ${KEY_VAULT_URI}
+
+server:
+  ssl:
+    key-alias: ${SERVER_SSL_CERTIFICATE_NAME}
+    key-store-type: DKS
+
+---
+
+spring:
+  profiles: development
+  cloud:
+    config:
+      fail-fast: true
