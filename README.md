@@ -13,7 +13,8 @@ urlFragment: "spring-boot-secure-communications-using-end-to-end-tls-ssl"
 This guide explains how to secure communications for Spring Boot apps 
 using end-to-end TLS/SSL and SSL certificates managed in Azure Key Vault. 
 
-Azure Spring Cloud is used for illustration. You can secure communications when you deploy 
+Azure Spring Cloud is used for illustration. You can apply the same approach to 
+secure communications when you deploy 
 Spring Boot apps to Azure Kubernetes Service, App Service or Virtual Machines.
 
 ## What will you experience
@@ -118,7 +119,7 @@ popd
 
 ### Setup Environment
 
-Let's start ...
+Let us start ...
 
 Create a bash script with environment variables by making a copy of the supplied template.
 ```bash
@@ -181,6 +182,7 @@ certificate artifacts for `Apache`.
 - Import the converted certificate into Key Vault.
 ```bash
 # ==== You may have to merge certificates into 1 file ====
+# ==== SAMPLE SCRIPT =====================================
 openssl pkcs12 -export -out myserver2.pfx -inkey privatekey.key -in mergedcert2.crt
 az keyvault certificate import --file myserver2.pfx \
     --name ${CUSTOM_DOMAIN_CERTIFICATE_NAME} 
@@ -304,7 +306,7 @@ az spring-cloud app deploy --name greeting-external-service \
 
 ## Open Spring Boot Apps Secured Using End-to-end TLS/SSL
 
-Let's open the app and test it.
+Let us open the app and test it.
 ```bash
 open ${SECURE_GATEWAY_URL}/greeting/hello/Manfred-Riem
 open ${SECURE_GATEWAY_URL}/greeting/hello-external/Asir-Selvasingh
