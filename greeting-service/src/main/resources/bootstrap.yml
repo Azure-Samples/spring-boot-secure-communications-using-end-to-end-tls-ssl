@@ -12,7 +12,7 @@ azure:
 server:
   ssl:
     key-alias: ${SERVER_SSL_CERTIFICATE_NAME}
-    key-store-type: DKS
+    key-store-type: AzureKeyVault
 
 ---
 
