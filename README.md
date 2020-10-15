@@ -110,7 +110,7 @@ cd azure-sdk-for-java/sdk/keyvault/azure-security-keyvault-jca
 mvn clean install -DskipTests=true
 
 # Install Spring Boot Key Vault Certificates Starter
-cd ../../..
+cd ../../../..
 cd azure-sdk-for-java/sdk/spring/azure-spring-boot-starter-keyvault-certificates
 mvn clean install -DskipTests=true
 popd
