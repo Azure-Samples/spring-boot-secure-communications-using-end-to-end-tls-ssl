@@ -237,10 +237,12 @@ az spring-cloud app create --name gateway --instance-count 1 --is-public true \
     --env KEY_VAULT_URI=${KEY_VAULT_URI} \
           GREETING_SERVICE=${GREETING_SERVICE} \
           GREETING_EXTERNAL_SERVICE=${GREETING_EXTERNAL_SERVICE}
+          
 # ==== Assign System Assigned Managed Identity to the gateway app ====
 az spring-cloud app identity assign --name gateway
 export GATEWAY_IDENTITY=$(az spring-cloud app show --name gateway | \
     jq -r '.identity.principalId')
+    
 # ==== Grant gateway app with access to the Key Vault ====
 az keyvault set-policy --name ${KEY_VAULT} \
    --object-id ${GATEWAY_IDENTITY} --certificate-permissions get list \
