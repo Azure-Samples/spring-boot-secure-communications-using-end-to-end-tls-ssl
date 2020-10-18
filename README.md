@@ -106,12 +106,12 @@ cd azure-sdk-for-java
 git checkout end-to-end-tls-ssl
 
 # Install JCA Provider for Azure Key Vault
-cd azure-sdk-for-java/sdk/keyvault/azure-security-keyvault-jca
+cd sdk/keyvault/azure-security-keyvault-jca
 mvn clean install -DskipTests=true
 
 # Install Spring Boot Key Vault Certificates Starter
-cd ../../../..
-cd azure-sdk-for-java/sdk/spring/azure-spring-boot-starter-keyvault-certificates
+cd ../../..
+cd sdk/spring/azure-spring-boot-starter-keyvault-certificates
 mvn clean install -DskipTests=true
 popd
 ```
@@ -227,16 +227,24 @@ az spring-cloud certificate add --name ${CUSTOM_DOMAIN_CERTIFICATE_NAME} \
 
 ### Create Apps in Azure Spring Cloud
 
-Create `gateway` app.
+Create `gateway` app, enable managed identities and
+grant them access to the Key Vault where certificates are stored.
 ```bash
 # ==== Create the gateway app ====
 az spring-cloud app create --name gateway --instance-count 1 --is-public true \
     --memory 2 \
     --jvm-options='-Xms2048m -Xmx2048m -XX:+UnlockExperimentalVMOptions -XX:+UseCGroupMemoryLimitForHeap -XX:+UseG1GC -Djava.awt.headless=true' \
     --env KEY_VAULT_URI=${KEY_VAULT_URI} \
-          CLIENT_SSL_CERTIFICATE_NAME=${CLIENT_SSL_CERTIFICATE_NAME} \
           GREETING_SERVICE=${GREETING_SERVICE} \
           GREETING_EXTERNAL_SERVICE=${GREETING_EXTERNAL_SERVICE}
+# ==== Assign System Assigned Managed Identity to the gateway app ====
+az spring-cloud app identity assign --name gateway
+export GATEWAY_IDENTITY=$(az spring-cloud app show --name gateway | \
+    jq -r '.identity.principalId')
+# ==== Grant gateway app with access to the Key Vault ====
+az keyvault set-policy --name ${KEY_VAULT} \
+   --object-id ${GATEWAY_IDENTITY} --certificate-permissions get list \
+   --key-permissions get list --secret-permissions get list
 
 export SECURE_GATEWAY_URL=$(az spring-cloud app show --name gateway | jq -r '.properties.url')
 ```

@@ -5,6 +5,10 @@ spring:
     config:
       uri: ${CONFIG_SERVER_URI}
 
+azure:
+  keyvault:
+    uri: ${KEY_VAULT_URI}
+
 ---
 
 spring:
