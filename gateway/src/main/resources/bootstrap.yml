@@ -9,6 +9,10 @@ azure:
   keyvault:
     uri: ${KEY_VAULT_URI}
 
+server:
+  ssl:
+    enabled: false
+
 ---
 
 spring:
