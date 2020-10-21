@@ -61,7 +61,7 @@ good for dev and testing environments. Production workloads should never use
 self-signed certificates.
 
 To securely load certificates into Spring Boot apps, we are using 
-the [Spring Boot Key Vault Certificates Starter](https://github.com/selvasingh/azure-sdk-for-java/tree/end-to-end-tls-ssl/sdk/spring/azure-spring-boot-starter-keyvault-certificates).
+the [Azure Key Vault Certificates Spring Boot Starter](https://github.com/selvasingh/azure-sdk-for-java/tree/end-to-end-tls-ssl/sdk/spring/azure-spring-boot-starter-keyvault-certificates).
 
 ```xml
 <dependency>
@@ -94,27 +94,6 @@ Install the Azure Spring Cloud extension for the Azure CLI using the following c
 az extension add --name spring-cloud
 ```
 
-## Install - Spring Boot Key Vault Certificates Starter
-
-Install the preview versions of [JCA Provider for Azure Key Vault](https://github.com/selvasingh/azure-sdk-for-java/tree/end-to-end-tls-ssl/sdk/keyvault/azure-security-keyvault-jca) and
- [Spring Boot Key Vault Certificates Starter](https://github.com/selvasingh/azure-sdk-for-java/tree/end-to-end-tls-ssl/sdk/spring/azure-spring-boot-starter-keyvault-certificates).
-
-```bash
-pushd ..
-git clone https://github.com/selvasingh/azure-sdk-for-java.git
-cd azure-sdk-for-java
-git checkout end-to-end-tls-ssl
-
-# Install JCA Provider for Azure Key Vault
-cd sdk/keyvault/azure-security-keyvault-jca
-mvn clean install -DskipTests=true
-
-# Install Spring Boot Key Vault Certificates Starter
-cd ../../..
-cd sdk/spring/azure-spring-boot-starter-keyvault-certificates
-mvn clean install -DskipTests=true
-popd
-```
 ## Deploy Spring Boot Apps
 
 ### Setup Environment
