@@ -66,7 +66,7 @@ the [Azure Key Vault Certificates Spring Boot Starter](https://github.com/selvas
 ```xml
 <dependency>
    <groupId>com.microsoft.azure</groupId>
-   <artifactId>azure-keyvault-certificates-spring-boot-starter</artifactId>
+   <artifactId>azure-spring-boot-starter-keyvault-certificates</artifactId>
 </dependency>
 ```
 
