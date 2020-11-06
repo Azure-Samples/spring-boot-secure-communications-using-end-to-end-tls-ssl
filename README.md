@@ -117,6 +117,9 @@ export KEY_VAULT=certs-2020
 # Customize CUSTOM_DOMAIN - set your custom domain for the main entry gateway
 export CUSTOM_DOMAIN=secure-gateway.spring-microservices.com
 
+# Customize CONTAINER_REGISTRY - set your name for the Container Registry
+export CONTAINER_REGISTRY=springbootimages
+
 ```
 
 Then, set the environment:

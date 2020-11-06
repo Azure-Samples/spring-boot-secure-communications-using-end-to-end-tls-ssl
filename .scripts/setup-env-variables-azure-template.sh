@@ -32,6 +32,7 @@ export CUSTOM_DOMAIN=secure-gateway.spring-microservices.com
 export CUSTOM_DOMAIN_CERTIFICATE_NAME=secure-gateway
 
 # ==== External Service ====
+# Customize CONTAINER_REGISTRY - set your name for the Container Registry
 export CONTAINER_REGISTRY=springbootimages
 export IMAGE_TAG=prod
 
