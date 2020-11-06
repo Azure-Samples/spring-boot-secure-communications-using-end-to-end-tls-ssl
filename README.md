@@ -164,7 +164,7 @@ certificate artifacts for `Apache`.
 # ==== SAMPLE SCRIPT =====================================
 openssl pkcs12 -export -out myserver2.pfx -inkey privatekey.key -in mergedcert2.crt
 az keyvault certificate import --file myserver2.pfx \
-    --name ${CUSTOM_DOMAIN_CERTIFICATE_NAME} 
+    --name ${CUSTOM_DOMAIN_CERTIFICATE_NAME} \
     --vault-name ${KEY_VAULT} --password 123456
 ```
 
@@ -186,6 +186,12 @@ az spring-cloud create --name ${SPRING_CLOUD_SERVICE} --resource-group ${RESOURC
 
 # ==== Apply Config ====
 az spring-cloud config-server set --config-file application.yml --name ${SPRING_CLOUD_SERVICE}
+
+# ==== Configure Defaults ===
+    az configure --defaults \
+        group=${RESOURCE_GROUP} \
+        location=${REGION} \
+        spring-cloud=${SPRING_CLOUD_SERVICE}
 ```
 
 Optionally, you may import the custom domain into Azure Spring Cloud.
@@ -234,10 +240,10 @@ Optionally, if you are using a custom domain for the `gateway` app, then bind th
 add a DNS record with your domain service to map the domain name to
 `${SECURE_GATEWAY_URL}`.
 ```bash
-# ==== Bind custom domain ====
-az spring-cloud app custom-domain bind --ap gateway \
-    --domain-name ${CUSTOM_DOMAIN_NAME} --certificate ${CUSTOM_DOMAIN_CERTIFICATE_NAME}
 # ==== Manual step to add a DNS record to map domain name to ${SECURE_GATEWAY_URL}
+# ==== Bind custom domain ====
+az spring-cloud app custom-domain bind --app gateway \
+    --domain-name ${CUSTOM_DOMAIN} --certificate ${CUSTOM_DOMAIN_CERTIFICATE_NAME}
 ```
 
 Create `greeting-service` and `greeting-external-service` apps, enable managed identities and
