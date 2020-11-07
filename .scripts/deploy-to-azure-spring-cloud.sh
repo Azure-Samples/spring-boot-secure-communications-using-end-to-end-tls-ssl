@@ -28,7 +28,18 @@ az keyvault certificate create --vault-name ${KEY_VAULT} \
 
 # purchase a certificate from an SSL certificate shop - manual step through portal
 
-# add the certificate to Key Vault - manual step through portal
+# ==== You may have to merge certificates into 1 file ====
+# ==== SAMPLE SCRIPT =====================================
+openssl pkcs12 -export -out myserver2.pfx -inkey privatekey.key -in mergedcert2.crt
+
+# ==== Add certificate to Key Vault ====
+
+az keyvault certificate import --file myserver2.pfx \
+    --name ${CUSTOM_DOMAIN_CERTIFICATE_NAME} \
+    --vault-name ${KEY_VAULT} --password 123456
+
+# ==== Deploy external service first ====
+source .scripts/deploy-external-service.sh
 
 # ==== Create Azure Spring Cloud ====
 az spring-cloud create --name ${SPRING_CLOUD_SERVICE} \
@@ -41,7 +52,6 @@ az spring-cloud config-server set \
     --name ${SPRING_CLOUD_SERVICE}
 
 # ==== Import custom domain certificate ====
-
 # First grant Azure Spring Cloud Domain Manager access to Key Vault
 az ad sp show --id 03b39d0f-4213-4864-a245-b1476ec03169 --query objectId
 
@@ -59,7 +69,6 @@ az spring-cloud app create --name gateway --instance-count 1 --is-public true \
     --memory 2 \
     --jvm-options='-Xms2048m -Xmx2048m -XX:+UnlockExperimentalVMOptions -XX:+UseCGroupMemoryLimitForHeap -XX:+UseG1GC -Djava.awt.headless=true' \
     --env KEY_VAULT_URI=${KEY_VAULT_URI} \
-          CLIENT_SSL_CERTIFICATE_NAME=${CLIENT_SSL_CERTIFICATE_NAME} \
           GREETING_SERVICE=${GREETING_SERVICE} \
           GREETING_EXTERNAL_SERVICE=${GREETING_EXTERNAL_SERVICE}
 
@@ -67,6 +76,7 @@ az spring-cloud app create --name gateway --instance-count 1 --is-public true \
 az spring-cloud app identity assign --name gateway
 export GATEWAY_IDENTITY=$(az spring-cloud app show --name gateway | \
     jq -r '.identity.principalId')
+
 # ==== Grant gateway app with access to the Key Vault ====
 az keyvault set-policy --name ${KEY_VAULT} \
    --object-id ${GATEWAY_IDENTITY} --certificate-permissions get list \
@@ -76,10 +86,9 @@ export SECURE_GATEWAY_URL=$(az spring-cloud app show --name gateway | jq -r '.pr
 
 # Map custom domain to gateway - manual DNS entry step
 
-
 # ==== Bind custom domain ====
-az spring-cloud app custom-domain bind --ap gateway \
-    --domain-name ${CUSTOM_DOMAIN_NAME} --certificate ${CUSTOM_DOMAIN_CERTIFICATE_NAME}
+az spring-cloud app custom-domain bind --app gateway \
+    --domain-name ${CUSTOM_DOMAIN} --certificate ${CUSTOM_DOMAIN_CERTIFICATE_NAME}
 
 # ==== Create the greeting-service app ====
 az spring-cloud app create --name greeting-service --instance-count 1 \
@@ -89,7 +98,8 @@ az spring-cloud app create --name greeting-service --instance-count 1 \
           SERVER_SSL_CERTIFICATE_NAME=${SERVER_SSL_CERTIFICATE_NAME}
 
 az spring-cloud app identity assign --name greeting-service
-export GREETING_SERVICE_IDENTITY=$(az spring-cloud app show --name greeting-service| jq -r '.identity.principalId')
+export GREETING_SERVICE_IDENTITY=$(az spring-cloud app show --name greeting-service | \
+    jq -r '.identity.principalId')
 
 az keyvault set-policy --name ${KEY_VAULT} \
    --object-id ${GREETING_SERVICE_IDENTITY} --certificate-permissions get list \
@@ -105,24 +115,20 @@ az spring-cloud app create --name greeting-external-service --instance-count 1 \
           EXTERNAL_SERVICE_PORT=${EXTERNAL_SERVICE_PORT}
 
 az spring-cloud app identity assign --name greeting-external-service
-export GREETING_EXTERNAL_SERVICE_IDENTITY=$(az spring-cloud app show --name greeting-external-service| jq -r '.identity.principalId')
+export GREETING_EXTERNAL_SERVICE_IDENTITY=$(az spring-cloud app show \
+    --name greeting-external-service| jq -r '.identity.principalId')
 
 az keyvault set-policy --name ${KEY_VAULT} \
    --object-id ${GREETING_EXTERNAL_SERVICE_IDENTITY} --certificate-permissions get list \
    --key-permissions get list --secret-permissions get list
 
-# ==== Deploy external service first ====
-# use [Project-Root-Dir]/.scripts/deploy-external-service.sh
-
 # ==== Build for cloud ====
 mvn clean package -DskipTests -Denv=cloud
 
 # ==== Deploy apps ====
-az spring-cloud app deploy --name gateway \
-    --jar-path ${GATEWAY_JAR}
+az spring-cloud app deploy --name gateway --jar-path ${GATEWAY_JAR}
 
-az spring-cloud app deploy --name greeting-service \
-    --jar-path ${GREETING_SERVICE_JAR}
+az spring-cloud app deploy --name greeting-service --jar-path ${GREETING_SERVICE_JAR}
 
 az spring-cloud app deploy --name greeting-external-service \
     --jar-path ${GREETING_EXTERNAL_SERVICE_JAR}

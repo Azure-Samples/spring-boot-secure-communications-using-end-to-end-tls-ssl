@@ -61,7 +61,7 @@ good for dev and testing environments. Production workloads should never use
 self-signed certificates.
 
 To securely load certificates into Spring Boot apps, we are using 
-the [Azure Key Vault Certificates Spring Boot Starter](https://github.com/selvasingh/azure-sdk-for-java/tree/end-to-end-tls-ssl/sdk/spring/azure-spring-boot-starter-keyvault-certificates).
+the [Azure Key Vault Certificates Spring Boot Starter](https://github.com/Azure/azure-sdk-for-java/tree/master/sdk/spring/azure-spring-boot-starter-keyvault-certificates).
 
 ```xml
 <dependency>
