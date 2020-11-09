@@ -191,7 +191,7 @@ az spring-cloud create --name ${SPRING_CLOUD_SERVICE} --resource-group ${RESOURC
 az spring-cloud config-server set --config-file application.yml --name ${SPRING_CLOUD_SERVICE}
 
 # ==== Configure Defaults ===
-    az configure --defaults \
+az configure --defaults \
         group=${RESOURCE_GROUP} \
         location=${REGION} \
         spring-cloud=${SPRING_CLOUD_SERVICE}
@@ -306,8 +306,10 @@ az spring-cloud app deploy --name greeting-external-service \
 
 Let us open the app and test it.
 ```bash
+echo ${SECURE_GATEWAY_URL}/greeting/hello/Manfred-Riem
 open ${SECURE_GATEWAY_URL}/greeting/hello/Manfred-Riem
-open ${SECURE_GATEWAY_URL}/greeting/hello-external/Asir-Selvasingh
+echo ${SECURE_GATEWAY_URL}/greeting-external/hello/Asir-Selvasingh
+open ${SECURE_GATEWAY_URL}/greeting-external/hello/Asir-Selvasingh
 ```
 
 ![](./media/segment-4-tls-ssl.jpg)
