@@ -14,8 +14,6 @@ export GREETING_EXTERNAL_SERVICE_JAR=greeting-external-service/target/greeting-e
 export GATEWAY_JAR=gateway/target/gateway-1.0.0.jar
 
 # ==== Spring Cloud Gateway service names ====
-export GREETING_SERVICE=greeting-service:80
-export GREETING_EXTERNAL_SERVICE=greeting-external-service:80
 # SECURE_GATEWAY will be auto-set by the script
 export SECURE_GATEWAY_URL=
 

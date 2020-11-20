@@ -214,8 +214,7 @@ az spring-cloud app create --name gateway --instance-count 1 --is-public true \
     --memory 2 \
     --jvm-options='-Xms2048m -Xmx2048m -XX:+UnlockExperimentalVMOptions -XX:+UseCGroupMemoryLimitForHeap -XX:+UseG1GC -Djava.awt.headless=true' \
     --env KEY_VAULT_URI=${KEY_VAULT_URI} \
-          GREETING_SERVICE=${GREETING_SERVICE} \
-          GREETING_EXTERNAL_SERVICE=${GREETING_EXTERNAL_SERVICE}
+          SERVER_SSL_CERTIFICATE_NAME=${SERVER_SSL_CERTIFICATE_NAME}
           
 # ==== Assign System Assigned Managed Identity to the gateway app ====
 az spring-cloud app identity assign --name gateway

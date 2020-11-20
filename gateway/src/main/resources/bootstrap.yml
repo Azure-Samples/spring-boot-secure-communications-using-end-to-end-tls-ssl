@@ -4,16 +4,6 @@ spring:
   cloud:
     config:
       uri: ${CONFIG_SERVER_URI}
-    gateway:
-      httpclient:
-        ssl:
-          useInsecureTrustManager: true
-      routes:
-        # =====================================
-        - id: greeting-service
-          uri: lb:https://greeting-service
-          predicates:
-            - Path=/hello/**
 
 azure:
   keyvault:
