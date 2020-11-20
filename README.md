@@ -245,7 +245,8 @@ add a DNS record with your domain service to map the domain name to
 # ==== Manual step to add a DNS record to map domain name to ${SECURE_GATEWAY_URL}
 # ==== Bind custom domain ====
 az spring-cloud app custom-domain bind --app gateway \
-    --domain-name ${CUSTOM_DOMAIN} --certificate ${CUSTOM_DOMAIN_CERTIFICATE_NAME}
+    --domain-name ${CUSTOM_DOMAIN} --certificate ${CUSTOM_DOMAIN_CERTIFICATE_NAME} \
+    --enable-end-to-end-tls
 ```
 
 Create `greeting-service` and `greeting-external-service` apps, enable managed identities and
