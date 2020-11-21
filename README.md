@@ -191,7 +191,7 @@ az spring-cloud create --name ${SPRING_CLOUD_SERVICE} --resource-group ${RESOURC
 az spring-cloud config-server set --config-file application.yml --name ${SPRING_CLOUD_SERVICE}
 
 # ==== Configure Defaults ===
-    az configure --defaults \
+az configure --defaults \
         group=${RESOURCE_GROUP} \
         location=${REGION} \
         spring-cloud=${SPRING_CLOUD_SERVICE}
@@ -223,8 +223,7 @@ az spring-cloud app create --name gateway --instance-count 1 --is-public true \
     --memory 2 \
     --jvm-options='-Xms2048m -Xmx2048m -XX:+UnlockExperimentalVMOptions -XX:+UseCGroupMemoryLimitForHeap -XX:+UseG1GC -Djava.awt.headless=true' \
     --env KEY_VAULT_URI=${KEY_VAULT_URI} \
-          GREETING_SERVICE=${GREETING_SERVICE} \
-          GREETING_EXTERNAL_SERVICE=${GREETING_EXTERNAL_SERVICE}
+          SERVER_SSL_CERTIFICATE_NAME=${SERVER_SSL_CERTIFICATE_NAME}
           
 # ==== Assign System Assigned Managed Identity to the gateway app ====
 az spring-cloud app identity assign --name gateway
@@ -246,7 +245,8 @@ add a DNS record with your domain service to map the domain name to
 # ==== Manual step to add a DNS record to map domain name to ${SECURE_GATEWAY_URL}
 # ==== Bind custom domain ====
 az spring-cloud app custom-domain bind --app gateway \
-    --domain-name ${CUSTOM_DOMAIN} --certificate ${CUSTOM_DOMAIN_CERTIFICATE_NAME}
+    --domain-name ${CUSTOM_DOMAIN} --certificate ${CUSTOM_DOMAIN_CERTIFICATE_NAME} \
+    --enable-end-to-end-tls
 ```
 
 Create `greeting-service` and `greeting-external-service` apps, enable managed identities and
@@ -306,8 +306,10 @@ az spring-cloud app deploy --name greeting-external-service \
 
 Let us open the app and test it.
 ```bash
+echo ${SECURE_GATEWAY_URL}/greeting/hello/Manfred-Riem
 open ${SECURE_GATEWAY_URL}/greeting/hello/Manfred-Riem
-open ${SECURE_GATEWAY_URL}/greeting/hello-external/Asir-Selvasingh
+echo ${SECURE_GATEWAY_URL}/greeting-external/hello/Asir-Selvasingh
+open ${SECURE_GATEWAY_URL}/greeting-external/hello/Asir-Selvasingh
 ```
 
 ![](./media/segment-4-tls-ssl.jpg)
