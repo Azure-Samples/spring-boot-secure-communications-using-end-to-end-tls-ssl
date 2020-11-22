@@ -84,14 +84,21 @@ You can secure communications using end-to-end TLS/SSL in Azure Spring Cloud. Pi
 | 4 | Spring Cloud Gateway to Spring Boot app (app to app)           |
 | 5 | Spring Boot app to external systems                            |
 
-You can secure all these segments, except 2, and support for segment 2 will be released shortly.
+You can secure all these segments, except segment 2, and support for segment 2 is in private preview.
 
 ## Install - Azure CLI extension
 
-Install the Azure Spring Cloud extension for the Azure CLI using the following command.
+Install the `Private Preview` version of Azure Spring Cloud extension for the 
+Azure CLI using the following command.
+
+If you already installed Azure Spring Cloud CLI extension, remove that first:
+```bash
+az extension remove --name spring-cloud
+```
 
 ```bash
-az extension add --name spring-cloud
+wget https://1drv.ms/u/s\!AqMtqX6qs5wlq8EXG-MHFyUw4kbv1g?e=2IA0pi --output-document=spring_cloud-2.0.0-py2.py3-none-any.whl
+az extension add --source spring_cloud-2.0.0-py2.py3-none-any.whl
 ```
 
 ## Deploy Spring Boot Apps
@@ -221,7 +228,7 @@ grant them access to the Key Vault where certificates are stored.
 # ==== Create the gateway app ====
 az spring-cloud app create --name gateway --instance-count 1 --is-public true \
     --memory 2 \
-    --jvm-options='-Xms2048m -Xmx2048m -XX:+UnlockExperimentalVMOptions -XX:+UseCGroupMemoryLimitForHeap -XX:+UseG1GC -Djava.awt.headless=true' \
+    --jvm-options='-Xms2048m -Xmx2048m -XX:+UnlockExperimentalVMOptions -XX:+UseCGroupMemoryLimitForHeap -XX:+UseG1GC -Djava.awt.headless=true -Djava.awt.headless=true -Dreactor.netty.http.server.accessLogEnabled=true' \
     --env KEY_VAULT_URI=${KEY_VAULT_URI} \
           SERVER_SSL_CERTIFICATE_NAME=${SERVER_SSL_CERTIFICATE_NAME}
           
@@ -270,7 +277,7 @@ az keyvault set-policy --name ${KEY_VAULT} \
 # ==== Create the greeting-external-service app ====
 az spring-cloud app create --name greeting-external-service --instance-count 1 \
     --memory 2 \
-    --jvm-options='-Xms2048m -Xmx2048m -XX:+UnlockExperimentalVMOptions -XX:+UseCGroupMemoryLimitForHeap -XX:+UseG1GC -Djava.awt.headless=true' \
+    --jvm-options='-Xms2048m -Xmx2048m -XX:+UnlockExperimentalVMOptions -XX:+UseCGroupMemoryLimitForHeap -XX:+UseG1GC -Djava.awt.headless=true -Dreactor.netty.http.server.accessLogEnabled=true' \
     --env KEY_VAULT_URI=${KEY_VAULT_URI} \
           SERVER_SSL_CERTIFICATE_NAME=${SERVER_SSL_CERTIFICATE_NAME} \
           EXTERNAL_SERVICE_ENDPOINT=${EXTERNAL_SERVICE_ENDPOINT} \

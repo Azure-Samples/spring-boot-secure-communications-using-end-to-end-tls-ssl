@@ -8,12 +8,15 @@ spring:
 azure:
   keyvault:
     uri: ${KEY_VAULT_URI}
+    jca:
+      overrideTrustManagerFactory: true
+      disableHostnameVerification: true
 
 server:
   ssl:
     enabled: true
-    key-store-type: AzureKeyVault
     key-alias: ${SERVER_SSL_CERTIFICATE_NAME}
+    key-store-type: AzureKeyVault
 
 ---
 

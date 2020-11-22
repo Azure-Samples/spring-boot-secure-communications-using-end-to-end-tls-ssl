@@ -67,7 +67,7 @@ az spring-cloud certificate add --name ${CUSTOM_DOMAIN_CERTIFICATE_NAME} \
 # ==== Create the gateway app ====
 az spring-cloud app create --name gateway --instance-count 1 --is-public true \
     --memory 2 \
-    --jvm-options='-Xms2048m -Xmx2048m -XX:+UnlockExperimentalVMOptions -XX:+UseCGroupMemoryLimitForHeap -XX:+UseG1GC -Djava.awt.headless=true' \
+    --jvm-options='-Xms2048m -Xmx2048m -XX:+UnlockExperimentalVMOptions -XX:+UseCGroupMemoryLimitForHeap -XX:+UseG1GC -Djava.awt.headless=true -Djava.awt.headless=true -Dreactor.netty.http.server.accessLogEnabled=true' \
     --env KEY_VAULT_URI=${KEY_VAULT_URI} \
           SERVER_SSL_CERTIFICATE_NAME=${SERVER_SSL_CERTIFICATE_NAME}
 
@@ -87,7 +87,8 @@ export SECURE_GATEWAY_URL=$(az spring-cloud app show --name gateway | jq -r '.pr
 
 # ==== Bind custom domain ====
 az spring-cloud app custom-domain bind --app gateway \
-    --domain-name ${CUSTOM_DOMAIN} --certificate ${CUSTOM_DOMAIN_CERTIFICATE_NAME}
+    --domain-name ${CUSTOM_DOMAIN} --certificate ${CUSTOM_DOMAIN_CERTIFICATE_NAME} \
+    --enable-end-to-end-tls
 
 # ==== Create the greeting-service app ====
 az spring-cloud app create --name greeting-service --instance-count 1 \
@@ -107,7 +108,7 @@ az keyvault set-policy --name ${KEY_VAULT} \
 # ==== Create the greeting-external-service app ====
 az spring-cloud app create --name greeting-external-service --instance-count 1 \
     --memory 2 \
-    --jvm-options='-Xms2048m -Xmx2048m -XX:+UnlockExperimentalVMOptions -XX:+UseCGroupMemoryLimitForHeap -XX:+UseG1GC -Djava.awt.headless=true' \
+    --jvm-options='-Xms2048m -Xmx2048m -XX:+UnlockExperimentalVMOptions -XX:+UseCGroupMemoryLimitForHeap -XX:+UseG1GC -Djava.awt.headless=true -Djava.awt.headless=true -Dreactor.netty.http.server.accessLogEnabled=true' \
     --env KEY_VAULT_URI=${KEY_VAULT_URI} \
           SERVER_SSL_CERTIFICATE_NAME=${SERVER_SSL_CERTIFICATE_NAME} \
           EXTERNAL_SERVICE_ENDPOINT=${EXTERNAL_SERVICE_ENDPOINT} \
