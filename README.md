@@ -97,7 +97,7 @@ az extension remove --name spring-cloud
 ```
 
 ```bash
-wget https://1drv.ms/u/s\!AqMtqX6qs5wlq8EXG-MHFyUw4kbv1g?e=2IA0pi --output-document=spring_cloud-2.0.0-py2.py3-none-any.whl
+wget "https://ascprivatecli.blob.core.windows.net/pricatecli/spring_cloud-2.0.0-py2.py3-none-any.whl?sp=rl&st=2020-11-23T01:45:42Z&se=2024-11-23T01:45:00Z&sv=2019-12-12&sr=b&sig=GFzhkLZd4aDsJfNflAdpFGPuV%2FG6fEyyEgOSSmCadIU%3D" --output-document=spring_cloud-2.0.0-py2.py3-none-any.whl
 az extension add --source spring_cloud-2.0.0-py2.py3-none-any.whl
 ```
 
