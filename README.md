@@ -88,17 +88,11 @@ You can secure all these segments, except segment 2, and support for segment 2 i
 
 ## Install - Azure CLI extension
 
-Install the `Private Preview` version of Azure Spring Cloud extension for the 
-Azure CLI using the following command.
+Install or update the Azure Spring Cloud extension(>=2.3.0) using the following command.
 
-If you already installed Azure Spring Cloud CLI extension, remove that first:
-```bash
-az extension remove --name spring-cloud
 ```
-
-```bash
-wget "https://ascprivatecli.blob.core.windows.net/pricatecli/spring_cloud-2.0.0-py2.py3-none-any.whl?sp=rl&st=2020-11-23T01:45:42Z&se=2024-11-23T01:45:00Z&sv=2019-12-12&sr=b&sig=GFzhkLZd4aDsJfNflAdpFGPuV%2FG6fEyyEgOSSmCadIU%3D" --output-document=spring_cloud-2.0.0-py2.py3-none-any.whl
-az extension add --source spring_cloud-2.0.0-py2.py3-none-any.whl
+az extension update --name spring-cloud
+az extension add --name spring-cloud
 ```
 
 ## Deploy Spring Boot Apps
