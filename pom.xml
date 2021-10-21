@@ -71,6 +71,7 @@
 		<module>service-registry</module>
 		<module>greeting-service</module>
 		<module>greeting-external-service</module>
+		<module>greeting-external-service-v2</module>
 		<module>gateway</module>
 	</modules>
 

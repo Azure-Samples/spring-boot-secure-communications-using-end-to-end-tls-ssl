@@ -284,6 +284,27 @@ export GREETING_EXTERNAL_SERVICE_IDENTITY=$(az spring-cloud app show \
 az keyvault set-policy --name ${KEY_VAULT} \
    --object-id ${GREETING_EXTERNAL_SERVICE_IDENTITY} --certificate-permissions get list \
    --key-permissions get list --secret-permissions get list
+
+az spring-cloud app create --name greeting-external-service-v2 --instance-count 1 --memory 2 --jvm-options='-Xms2048m -Xmx2048m -XX:+UnlockExperimentalVMOptions -XX:+UseCGroupMemoryLimitForHeap -XX:+UseG1GC -Djava.awt.headless=true -Dreactor.netty.http.server.accessLogEnabled=true' --env KEY_VAULT_URI=${KEY_VAULT_URI} SERVER_SSL_CERTIFICATE_NAME=${SERVER_SSL_CERTIFICATE_NAME} EXTERNAL_SERVICE_ENDPOINT=${EXTERNAL_SERVICE_ENDPOINT} EXTERNAL_SERVICE_PORT=${EXTERNAL_SERVICE_PORT}
+
+az spring-cloud app update --name greeting-external-service-v2 --env EXTERNAL_SERVICE_ENDPOINT=${EXTERNAL_SERVICE_ENDPOINT} EXTERNAL_SERVICE_PORT=${EXTERNAL_SERVICE_PORT}
+
+az spring-cloud app identity assign --name greeting-external-service-v2
+
+export GREETING_EXTERNAL_SERVICE_IDENTITY_V2=$(az spring-cloud app show \
+    --name greeting-external-service-v2| jq -r '.identity.principalId')
+
+az keyvault set-policy --name ${KEY_VAULT} \
+   --object-id ${GREETING_EXTERNAL_SERVICE_IDENTITY_V2} --certificate-permissions get list \
+   --key-permissions get list --secret-permissions get list
+
+```
+
+```
+az spring-cloud certificate add --name selfsigned --service secure --vault-certificate-name self-signed --vault-uri https://certs-2021.vault.azure.net/ --only-public-certificate true
+
+az spring-cloud app append-loaded-public-certificate --name greeting-external-service-v2 --service secure --certificate-name selfsigned --load-trust-store true
+
 ```
 
 ### Deploy apps to Azure Spring Cloud
@@ -301,6 +322,9 @@ az spring-cloud app deploy --name greeting-service --jar-path ${GREETING_SERVICE
 
 az spring-cloud app deploy --name greeting-external-service \
     --jar-path ${GREETING_EXTERNAL_SERVICE_JAR}
+
+az spring-cloud app deploy --name greeting-external-service-v2 \
+    --jar-path ${GREETING_EXTERNAL_SERVICE_V2_JAR}
 ```
 
 ## Open Spring Boot Apps Secured Using End-to-end TLS/SSL

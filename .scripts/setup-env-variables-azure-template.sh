@@ -11,6 +11,7 @@ export SPRING_CLOUD_SERVICE=secure
 # ==== JARS ====
 export GREETING_SERVICE_JAR=greeting-service/target/greeting-service-1.0.0.jar
 export GREETING_EXTERNAL_SERVICE_JAR=greeting-external-service/target/greeting-external-service-1.0.0.jar
+export GREETING_EXTERNAL_SERVICE_V2_JAR=greeting-external-service-v2/target/greeting-external-service-v2-1.0.0.jar
 export GATEWAY_JAR=gateway/target/gateway-1.0.0.jar
 
 # ==== Spring Cloud Gateway service names ====
