@@ -1,18 +1,30 @@
 spring:
   application:
     name: greeting-external-service
-  cloud:
-    config:
-      uri: ${CONFIG_SERVER_URI}
+    message: Hello, %s! --- Configured by Spring Cloud Config Server
+#  cloud:
+#    config:
+#      uri: ${CONFIG_SERVER_URI}
 
 azure:
   keyvault:
     uri: ${KEY_VAULT_URI}
+    client-id: 3948b75d-a678-4be1-bac0-745dcb1fc140
+    client-key: jR4vfjF5qzELFgLU3RHR4d1Nr~RCcE_bM.
+    enabled: true
+    tenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
+
 
 server:
   ssl:
     key-alias: ${SERVER_SSL_CERTIFICATE_NAME}
     key-store-type: AzureKeyVault
+  servlet:
+    context-path: /greeting
+
+feign:
+  hystrix:
+    enabled: true
 
 ---
 

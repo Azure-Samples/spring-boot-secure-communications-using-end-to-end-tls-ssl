@@ -6,7 +6,9 @@
 
 package com.secure.greeting;
 
+//import com.azure.security.keyvault.jca.KeyVaultJcaProvider;
 import java.security.KeyStore;
+//import java.security.Security;
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLSession;
@@ -17,13 +19,13 @@ import org.apache.http.impl.client.HttpClients;
 import org.apache.http.ssl.SSLContexts;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
+//import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.context.annotation.Bean;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.web.client.RestTemplate;
 
 @SpringBootApplication
-@EnableDiscoveryClient
+//@EnableDiscoveryClient
 public class GreetingApplication {
 
 	public static void main(String[] args) {
@@ -32,6 +34,8 @@ public class GreetingApplication {
 
 	@Bean
 	public RestTemplate restTemplate() throws Exception {
+//		KeyVaultJcaProvider provider = new KeyVaultJcaProvider();
+//		Security.addProvider(provider);
 		KeyStore ks = KeyStore.getInstance("AzureKeyVault");
 		SSLContext sslContext = SSLContexts.custom()
 			.loadTrustMaterial(ks, new TrustSelfSignedStrategy())
