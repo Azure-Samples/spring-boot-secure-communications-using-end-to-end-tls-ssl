@@ -1,20 +1,19 @@
 spring:
   application:
-    name: gateway
+    name: greeting-external-service-v2
   cloud:
     config:
       uri: ${CONFIG_SERVER_URI}
 
 azure:
   keyvault:
-    uri: ${KEY_VAULT_URI}
-    jca:
-      overrideTrustManagerFactory: true
-      disableHostnameVerification: true
+    uri: https://certs-2021.vault.azure.net/
+    client-id: 3948b75d-a678-4be1-bac0-745dcb1fc140
+    client-secret:
+    tenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
 
 server:
   ssl:
-    enabled: true
     key-alias: ${SERVER_SSL_CERTIFICATE_NAME}
     key-store-type: AzureKeyVault
 
@@ -25,5 +24,3 @@ spring:
   cloud:
     config:
       fail-fast: true
-      password: ${CONFIG_SERVICE_PASSWORD}
-      username: user

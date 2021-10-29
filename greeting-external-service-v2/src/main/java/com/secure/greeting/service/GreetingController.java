@@ -8,13 +8,23 @@ package com.secure.greeting.service;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.security.cert.X509Certificate;
+
+import org.apache.http.conn.ssl.NoopHostnameVerifier;
+import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
+import org.apache.http.conn.ssl.TrustStrategy;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.client.RestTemplateBuilder;
+import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
+
+import javax.net.ssl.SSLContext;
 
 @RestController
 public class GreetingController {
@@ -44,9 +54,18 @@ public class GreetingController {
             // note change the URL below to correspond to your own service
             // hosted externally from Azure Spring Cloud.
             //
-            RestTemplate restTemplate = restTemplateBuilder.build();
+//            RestTemplate restTemplate = restTemplateBuilder.build();
+
+            TrustStrategy acceptingTrustStrategy = (x509Certificates, s) -> true;
+            SSLContext sslContext = org.apache.http.ssl.SSLContexts.custom().loadTrustMaterial(null, acceptingTrustStrategy).build();
+            SSLConnectionSocketFactory csf = new SSLConnectionSocketFactory(sslContext, new NoopHostnameVerifier());
+            CloseableHttpClient httpClient = HttpClients.custom().setSSLSocketFactory(csf).build();
+            HttpComponentsClientHttpRequestFactory requestFactory = new HttpComponentsClientHttpRequestFactory();
+            requestFactory.setHttpClient(httpClient);
+            RestTemplate restTemplate = new RestTemplate(requestFactory);
             result = restTemplate.getForObject("https://" + externalServiceEndpoint + ":" +
                 externalServicePort + "/hello/{name}", String.class, name);
+
 
             result = outputPart1 + externalURI + outputPart3 + result + outputPart5;
 
