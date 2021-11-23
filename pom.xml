@@ -13,7 +13,7 @@
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
 		<version>2.5.4</version>
-		<relativePath/> 
+		<relativePath/>
 	</parent>
 
 	<properties>
@@ -21,20 +21,6 @@
 		<java.version>1.8</java.version>
 		<spring-cloud.version>2020.0.3</spring-cloud.version>
 	</properties>
-	
-
-	<!-- <parent>
-		<groupId>org.springframework.boot</groupId>
-		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>2.3.0.RELEASE</version>
-		<relativePath/> 
-	</parent>
-
-	<properties>
-		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<java.version>1.8</java.version>
-		<spring-cloud.version>Hoxton.SR8</spring-cloud.version>
-	</properties> -->
 
 	<dependencyManagement>
 		<dependencies>
@@ -68,15 +54,6 @@
 					<value>cloud</value>
 				</property>
 			</activation>
-            <!--
-			<dependencies>
-				<dependency>
-					<groupId>com.microsoft.azure</groupId>
-					<artifactId>spring-cloud-starter-azure-spring-cloud-client</artifactId>
-					<version>2.2.0</version>
-				</dependency>
-			</dependencies>
-			-->
 		</profile>
 
 	</profiles>

@@ -285,26 +285,6 @@ az keyvault set-policy --name ${KEY_VAULT} \
    --object-id ${GREETING_EXTERNAL_SERVICE_IDENTITY} --certificate-permissions get list \
    --key-permissions get list --secret-permissions get list
 
-az spring-cloud app create --name greeting-external-service-v2 --instance-count 1 --memory 2 --jvm-options='-Xms2048m -Xmx2048m -XX:+UnlockExperimentalVMOptions -XX:+UseCGroupMemoryLimitForHeap -XX:+UseG1GC -Djava.awt.headless=true -Dreactor.netty.http.server.accessLogEnabled=true' --env KEY_VAULT_URI=${KEY_VAULT_URI} SERVER_SSL_CERTIFICATE_NAME=${SERVER_SSL_CERTIFICATE_NAME} EXTERNAL_SERVICE_ENDPOINT=${EXTERNAL_SERVICE_ENDPOINT} EXTERNAL_SERVICE_PORT=${EXTERNAL_SERVICE_PORT}
-
-az spring-cloud app update --name greeting-external-service-v2 --env EXTERNAL_SERVICE_ENDPOINT=${EXTERNAL_SERVICE_ENDPOINT} EXTERNAL_SERVICE_PORT=${EXTERNAL_SERVICE_PORT}
-
-az spring-cloud app identity assign --name greeting-external-service-v2
-
-export GREETING_EXTERNAL_SERVICE_IDENTITY_V2=$(az spring-cloud app show \
-    --name greeting-external-service-v2| jq -r '.identity.principalId')
-
-az keyvault set-policy --name ${KEY_VAULT} \
-   --object-id ${GREETING_EXTERNAL_SERVICE_IDENTITY_V2} --certificate-permissions get list \
-   --key-permissions get list --secret-permissions get list
-
-```
-
-```
-az spring-cloud certificate add --name selfsigned --service secure --vault-certificate-name self-signed --vault-uri https://certs-2021.vault.azure.net/ --only-public-certificate true
-
-az spring-cloud app append-loaded-public-certificate --name greeting-external-service-v2 --service secure --certificate-name selfsigned --load-trust-store true
-
 ```
 
 ### Deploy apps to Azure Spring Cloud
@@ -323,8 +303,6 @@ az spring-cloud app deploy --name greeting-service --jar-path ${GREETING_SERVICE
 az spring-cloud app deploy --name greeting-external-service \
     --jar-path ${GREETING_EXTERNAL_SERVICE_JAR}
 
-az spring-cloud app deploy --name greeting-external-service-v2 \
-    --jar-path ${GREETING_EXTERNAL_SERVICE_V2_JAR}
 ```
 
 ## Open Spring Boot Apps Secured Using End-to-end TLS/SSL
@@ -342,6 +320,53 @@ open ${SECURE_GATEWAY_URL}/greeting-external/hello/Asir-Selvasingh
 ![](./media/segment-5-tls-ssl.jpg)
 
 ![](./media/azure-spring-cloud.jpg)
+
+## Call external service via TLS/SSL using Spring Cloud provided feature
+
+Here we provided a new app `greeting-external-service-v2` to show how to make use of azure spring cloud provided feature to call external service. 
+In this app, we only use [Azure Key Vault Certificates Spring Boot Starter](https://github.com/Azure/azure-sdk-for-java/tree/master/sdk/spring/azure-spring-boot-starter-keyvault-certificates) to perform secure communication with gateway app.
+
+Import public certificate from Key Vault into azure spring cloud service
+///Add principal to kv
+```bash
+az spring-cloud certificate add --name ${CLIENT_SSL_CERTIFICATE_NAME} --service ${SPRING_CLOUD_SERVICE} --vault-certificate-name ${CLIENT_SSL_CERTIFICATE_NAME} --vault-uri ${KEY_VAULT_URI} --only-public-cert true
+```
+
+Create app `greeting-external-service-v2` in Azure Spring Cloud.
+
+```bash
+az spring-cloud app create --name greeting-external-service-v2 \
+     --instance-count 1 --memory 2 --jvm-options='-Xms2048m -Xmx2048m -XX:+UnlockExperimentalVMOptions -XX:+UseCGroupMemoryLimitForHeap -XX:+UseG1GC -Djava.awt.headless=true -Dreactor.netty.http.server.accessLogEnabled=true' \
+     --env KEY_VAULT_URI=${KEY_VAULT_URI} SERVER_SSL_CERTIFICATE_NAME=${SERVER_SSL_CERTIFICATE_NAME} \ 
+           EXTERNAL_SERVICE_ENDPOINT=${EXTERNAL_SERVICE_ENDPOINT} EXTERNAL_SERVICE_PORT=${EXTERNAL_SERVICE_PORT}
+
+az spring-cloud app identity assign --name greeting-external-service-v2
+
+export GREETING_EXTERNAL_SERVICE_IDENTITY_V2=$(az spring-cloud app show \
+    --name greeting-external-service-v2| jq -r '.identity.principalId')
+
+az keyvault set-policy --name ${KEY_VAULT} \
+   --object-id ${GREETING_EXTERNAL_SERVICE_IDENTITY_V2} --certificate-permissions get list \
+   --key-permissions get list --secret-permissions get list
+```
+
+Load the public certificate imported from key vault into `greeting-external-service-v2`'s trust store.
+
+```bash
+az spring-cloud app append-loaded-public-certificate \
+    --name greeting-external-service-v2 --service ${SPRING_CLOUD_SERVICE} \
+    --certificate-name ${CLIENT_SSL_CERTIFICATE_NAME} --load-trust-store true
+```
+
+Build and deploy `greeting-external-service-v2`
+
+```bash
+mvn clean package -DskipTests -Denv=cloud
+
+az spring-cloud app deploy --name greeting-external-service-v2 \
+    --jar-path ${GREETING_EXTERNAL_SERVICE_V2_JAR}
+
+```
 
 ## Next Steps
 
