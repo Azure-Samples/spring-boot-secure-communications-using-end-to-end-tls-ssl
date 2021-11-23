@@ -3,8 +3,7 @@ spring:
     config:
       server:
         git:
-          uri: https://github.com/Descatles/spring-boot-secure-communications-using-end-to-end-tls-ssl-config.git
-          default-label: wenhao/tls
+          uri: https://github.com/Azure-Samples/spring-boot-secure-communications-using-end-to-end-tls-ssl-config.git
         native:
           search-locations: classpath:.
   profiles:
