@@ -284,7 +284,6 @@ export GREETING_EXTERNAL_SERVICE_IDENTITY=$(az spring-cloud app show \
 az keyvault set-policy --name ${KEY_VAULT} \
    --object-id ${GREETING_EXTERNAL_SERVICE_IDENTITY} --certificate-permissions get list \
    --key-permissions get list --secret-permissions get list
-
 ```
 
 ### Deploy apps to Azure Spring Cloud
@@ -302,7 +301,6 @@ az spring-cloud app deploy --name greeting-service --jar-path ${GREETING_SERVICE
 
 az spring-cloud app deploy --name greeting-external-service \
     --jar-path ${GREETING_EXTERNAL_SERVICE_JAR}
-
 ```
 
 ## Open Spring Boot Apps Secured Using End-to-end TLS/SSL
@@ -324,10 +322,18 @@ open ${SECURE_GATEWAY_URL}/greeting-external/hello/Asir-Selvasingh
 ## Call external service via TLS/SSL using Spring Cloud provided feature
 
 Here we provided a new app `greeting-external-service-v2` to show how to make use of azure spring cloud provided feature to call external service. 
-In this app, we only use [Azure Key Vault Certificates Spring Boot Starter](https://github.com/Azure/azure-sdk-for-java/tree/master/sdk/spring/azure-spring-boot-starter-keyvault-certificates) to perform secure communication with gateway app.
+
+In this app, we only use [Azure Key Vault Certificates Spring Boot Starter](https://github.com/Azure/azure-sdk-for-java/tree/master/sdk/spring/azure-spring-boot-starter-keyvault-certificates) to perform secure communication with gateway app. 
+
+For the secure communication with external service, azure spring cloud would take care of it. 
+
+Grant Azure Spring Cloud access to your key vault
+```bash
+az keyvault set-policy --name ${KEY_VAULT} \
+   --object-id ${TLS_FPA} --certificate-permissions get list
+```
 
 Import public certificate from Key Vault into azure spring cloud service
-///Add principal to kv
 ```bash
 az spring-cloud certificate add --name ${CLIENT_SSL_CERTIFICATE_NAME} --service ${SPRING_CLOUD_SERVICE} --vault-certificate-name ${CLIENT_SSL_CERTIFICATE_NAME} --vault-uri ${KEY_VAULT_URI} --only-public-cert true
 ```
@@ -367,6 +373,15 @@ az spring-cloud app deploy --name greeting-external-service-v2 \
     --jar-path ${GREETING_EXTERNAL_SERVICE_V2_JAR}
 
 ```
+
+Open the app and test it.
+
+```bash
+echo ${SECURE_GATEWAY_URL}/greeting-external-v2/hello/Asir-Selvasingh
+open ${SECURE_GATEWAY_URL}/greeting-external-v2/hello/Asir-Selvasingh
+```
+
+![](./media/segment-6-tls-ssl.jpg)
 
 ## Next Steps
 

@@ -45,7 +45,8 @@ export EXTERNAL_SERVICE_SYSTEM_ASSIGNED_MANAGED_IDENTITY_SERVICE_PRINCIPAL=
 export EXTERNAL_SERVICE_ENDPOINT=
 export EXTERNAL_SERVICE_PORT=443
 
-
+# Do not modify, the object id of azure spring cloud used fpa
+export TLS_FPA=e8de9221-a19c-4c81-b814-fd37c6caf9d2
 
 # ==== IGNORE ====
 # ==== Reserved for the future IGNORE for now ====
