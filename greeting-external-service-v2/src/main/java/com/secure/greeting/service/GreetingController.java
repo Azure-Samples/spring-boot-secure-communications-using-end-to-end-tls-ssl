@@ -115,9 +115,9 @@ public class GreetingController {
 
 
     private String outputPart1 = new String(
-        "<!DOCTYPE html><html><head><title>Greeting External Service V2</title><style>" +
+        "<!DOCTYPE html><html><head><title>Greeting External Service Version 2</title><style>" +
             "body { background-color: white; text-align: left; color: blacm; font-family: Arial, Helvetica, sans-serif;}" +
-            "</style></head><body><h1>Greeting External Service</h1><hr><p>\"greeting-external-service-v2\" &nbsp;&nbsp;&nbsp;&nbsp;: <strong>invoked the \"external-service\" at \"");
+            "</style></head><body><h1>Greeting External Service Version 2</h1><hr><p>\"greeting-external-service-v2\" &nbsp;&nbsp;&nbsp;&nbsp;: <strong>invoked the \"external-service\" at \"");
 
     private String outputPart3 = new String(
         "\".</strong></p><p>\"external-service\" responded : <strong>\"");
