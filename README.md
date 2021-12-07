@@ -76,15 +76,15 @@ You can secure communications using end-to-end TLS/SSL in Azure Spring Cloud. Pi
 
 ![](./media/tls-ssl-azure-spring-cloud-10-13-2020.svg)
 
-| # | TLS/SSL Segment                                                |
-|---|----------------------------------------------------------------|
-| 1 | Consumers to service                                           |
-| 2 | Service ingress controller to target app, Spring Cloud Gateway |
-| 3 | Spring Cloud Gateway to Spring Cloud Service Registry          |
-| 4 | Spring Cloud Gateway to Spring Boot app (app to app)           |
-| 5 | Spring Boot app to external systems                            |
+| # | TLS/SSL Segment                                                     |
+|---|---------------------------------------------------------------------|
+| 1 | Consumers to service                                                |
+| 2 | Service ingress controller to target app, e.g. Spring Cloud Gateway |
+| 3 | Spring Cloud Gateway to Spring Cloud Service Registry               |
+| 4 | Spring Cloud Gateway to Spring Boot app (app to app)                |
+| 5 | Spring Boot app to external systems                                 |
 
-You can secure all these segments, except segment 2, and support for segment 2 is in private preview.
+You can secure communications end-to-end or terminate transport level security at any communication point for Spring Boot apps. You can also automate the provisioning and configuration for all the Azure resources needed for securing communications.
 
 ## Install - Azure CLI extension
 
