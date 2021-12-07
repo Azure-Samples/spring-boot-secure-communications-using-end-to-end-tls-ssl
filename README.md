@@ -88,7 +88,7 @@ You can secure all these segments, except segment 2, and support for segment 2 i
 
 ## Install - Azure CLI extension
 
-Install or update the Azure Spring Cloud extension(>=2.3.0) using the following command.
+Install or update the Azure Spring Cloud extension(>=2.10.0) using the following command.
 
 ```
 az extension update --name spring-cloud
