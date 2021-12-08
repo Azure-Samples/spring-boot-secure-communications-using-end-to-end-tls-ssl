@@ -11,6 +11,7 @@ export SPRING_CLOUD_SERVICE=secure
 # ==== JARS ====
 export GREETING_SERVICE_JAR=greeting-service/target/greeting-service-1.0.0.jar
 export GREETING_EXTERNAL_SERVICE_JAR=greeting-external-service/target/greeting-external-service-1.0.0.jar
+export GREETING_EXTERNAL_SERVICE_V2_JAR=greeting-external-service-v2/target/greeting-external-service-v2-1.0.0.jar
 export GATEWAY_JAR=gateway/target/gateway-1.0.0.jar
 
 # ==== Spring Cloud Gateway service names ====
@@ -44,7 +45,8 @@ export EXTERNAL_SERVICE_SYSTEM_ASSIGNED_MANAGED_IDENTITY_SERVICE_PRINCIPAL=
 export EXTERNAL_SERVICE_ENDPOINT=
 export EXTERNAL_SERVICE_PORT=443
 
-
+# Do not modify, the object id of azure spring cloud used fpa
+export TLS_FPA=d2531223-68f9-459e-b225-5592f90d145e
 
 # ==== IGNORE ====
 # ==== Reserved for the future IGNORE for now ====
