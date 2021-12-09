@@ -202,10 +202,10 @@ Optionally, you may import the custom domain into Azure Spring Cloud.
 ```bash
 # ==== Import custom domain certificate ====
 # First grant Azure Spring Cloud Domain Manager access to Key Vault
-az ad sp show --id 03b39d0f-4213-4864-a245-b1476ec03169 --query objectId
+export CUSTOM_DOMAIN_FPA_OBJECT_ID=$(az ad sp show --id 03b39d0f-4213-4864-a245-b1476ec03169 | jq -r '.objectId')
 
 az keyvault set-policy --name ${KEY_VAULT} \
-    --object-id 938df8e2-2b9d-40b1-940c-c75c33494239 \
+    --object-id ${CUSTOM_DOMAIN_FPA_OBJECT_ID} \
     --certificate-permissions get list \
     --secret-permissions get list
 
@@ -319,7 +319,7 @@ open ${SECURE_GATEWAY_URL}/greeting-external/hello/Asir-Selvasingh
 
 ![](./media/azure-spring-cloud.jpg)
 
-## Call external service via TLS/SSL using Spring Cloud provided feature
+## Call external service via TLS/SSL using Azure Spring Cloud provided feature
 
 Here we provided a new app `greeting-external-service-v2` to show how to make use of azure spring cloud provided feature to call external service. 
 
@@ -329,8 +329,10 @@ For the secure communication with external service, azure spring cloud would tak
 
 Grant Azure Spring Cloud access to your key vault
 ```bash
+export TLS_FPA_OBJECT_ID=$(az ad sp show --id e8de9221-a19c-4c81-b814-fd37c6caf9d2 | jq -r '.objectId')
+
 az keyvault set-policy --name ${KEY_VAULT} \
-   --object-id ${TLS_FPA} --certificate-permissions get list
+   --object-id ${TLS_FPA_OBJECT_ID} --certificate-permissions get list
 ```
 
 Import public certificate from Key Vault into azure spring cloud service
@@ -343,8 +345,10 @@ Create app `greeting-external-service-v2` in Azure Spring Cloud.
 ```bash
 az spring-cloud app create --name greeting-external-service-v2 \
      --instance-count 1 --memory 2 --jvm-options='-Xms2048m -Xmx2048m -XX:+UnlockExperimentalVMOptions -XX:+UseCGroupMemoryLimitForHeap -XX:+UseG1GC -Djava.awt.headless=true -Dreactor.netty.http.server.accessLogEnabled=true' \
-     --env KEY_VAULT_URI=${KEY_VAULT_URI} SERVER_SSL_CERTIFICATE_NAME=${SERVER_SSL_CERTIFICATE_NAME} \ 
-           EXTERNAL_SERVICE_ENDPOINT=${EXTERNAL_SERVICE_ENDPOINT} EXTERNAL_SERVICE_PORT=${EXTERNAL_SERVICE_PORT}
+     --env KEY_VAULT_URI=${KEY_VAULT_URI} \
+           SERVER_SSL_CERTIFICATE_NAME=${SERVER_SSL_CERTIFICATE_NAME} \
+           EXTERNAL_SERVICE_ENDPOINT=${EXTERNAL_SERVICE_ENDPOINT} \
+           EXTERNAL_SERVICE_PORT=${EXTERNAL_SERVICE_PORT}
 
 az spring-cloud app identity assign --name greeting-external-service-v2
 
