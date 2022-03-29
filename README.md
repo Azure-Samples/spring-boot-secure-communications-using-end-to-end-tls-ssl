@@ -368,6 +368,12 @@ az spring-cloud app append-loaded-public-certificate \
     --certificate-name ${CLIENT_SSL_CERTIFICATE_NAME} --load-trust-store true
 ```
 
+> [!Reminder]
+> Currently the auto-wiring of “--load-trust-store” is not compatible with java apps which requires build service, that includes java apps deployed from source code and all java apps in enterprise tier. We are now working on supporting these apps and it would be coming soon.
+>
+> For these apps which could not use the auto-wiring of “--load-trust-store”, we could still take the convenience of this feature to put the certificate into app's local environment by using append-loaded-public-certificate command with "--load-trust-store" set to false. Under that condition, the certificate could be found under folder /etc/azure-spring-cloud/certs/public/ in app's environment with the name you give it, you could load that manually by any way you want.
+>
+
 Build and deploy `greeting-external-service-v2`
 
 ```bash
