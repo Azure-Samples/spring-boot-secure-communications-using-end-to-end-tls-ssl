@@ -327,6 +327,8 @@ In this app, we only use [Azure Key Vault Certificates Spring Boot Starter](http
 
 For the secure communication with external service, azure spring cloud would take care of it. 
 
+### Basic/Standard Tier
+
 Grant Azure Spring Cloud access to your key vault
 ```bash
 export TLS_FPA_OBJECT_ID=$(az ad sp show --id e8de9221-a19c-4c81-b814-fd37c6caf9d2 | jq -r '.objectId')
@@ -378,6 +380,75 @@ az spring-cloud app deploy --name greeting-external-service-v2 \
 
 ```
 
+### Enterprise Tier
+
+In Enterprise Tier, we recommand to use azure spring apps provided [bring your own persistent storage](https://docs.microsoft.com/en-us/azure/spring-apps/how-to-custom-persistent-storage?tabs=Azure-portal) feature and enterprise tier internal build pack [Paketo CA Certificates Buildpack](https://github.com/paketo-buildpacks/ca-certificates) to enable `greeting-external-service-v2` call external service. 
+
+The bring your own persistent storage enables you to upload anything you want into a storage account that you control and mount that to your applications and the Paketo CA Certificates Buildpack cloud adds CA Certificates to the system truststore at runtime. Certificates must be provided with a binding of type ca-certificates and each certificate in the binding should contain exactly one PEM encoded CA certificate.
+
+Create an azure storage account.
+
+```bash
+az storage account create --name ${STORAGE_ACCOUNT_NAME} --region ${REGION} --kind StorageV2 \
+    --sku Standard_ZRS --enable-large-file-share --output none
+```
+
+Create an azure file share in the storage account
+
+```bash
+az storage share-rm create --storage-account ${STORAGE_ACCOUNT_NAME} --name ${SHARE_NAME} \
+    --access-tier "TransactionOptimized" --quota 1024 --output none
+```
+
+Download the **public portion** of the client certificate from Key Vault.
+
+```bash
+az keyvault certificate download --file ${CLIENT_SSL_CERTIFICATE_NAME_LOCAL} \
+    --encoding PEM --name ${CLIENT_SSL_CERTIFICATE_NAME} --vault-name ${KEY_VAULT}
+```
+
+Upload the downloaded public certificate into the created azure file share
+
+```bash
+az storage file upload --account-name ${STORAGE_ACCOUNT_NAME} \
+    --share-name ${SHARE_NAME} --source  ${CLIENT_SSL_CERTIFICATE_NAME_LOCAL} 
+```
+
+Upload the binding type file which indicates the files in this file share are all in type ca-certificates
+
+```bash
+az storage file upload --account-name ${STORAGE_ACCOUNT_NAME} \
+    --share-name ${SHARE_NAME} --source  ${BINDING_TYPE_FILE} 
+```
+Bind your Azure Storage account as a storage resource in your Azure Spring Apps instance:
+
+```bash
+az spring storage add --resource-group ${RESOURCE_GROUP} --service ${SPRING_CLOUD_SERVICE} \
+   --name ${STORAGE_RESOURCE_NAME} --storage-type StorageAccount \
+   --account-name ${STORAGE_ACCOUNT_NAME} --account-key <your-storage-account-key>
+```
+
+Create an app with `SERVICE_BINDING_ROOT` environment variable and append the Azure File to the app, please pay attention that the storage mount path **must** be under `/bindings` and the environment variable `SERVICE_BINDING_ROOT` **must** be `/bindings`
+
+```bash
+az spring app create --name greeting-external-service-v2 \
+    --instance-count 1 --memory 2 --jvm-options='-Xms2048m -Xmx2048m -XX:+UnlockExperimentalVMOptions -XX:+UseCGroupMemoryLimitForHeap -XX:+UseG1GC -Djava.awt.headless=true -Dreactor.netty.http.server.accessLogEnabled=true' \
+    --env EXTERNAL_SERVICE_ENDPOINT=${EXTERNAL_SERVICE_ENDPOINT} \
+          EXTERNAL_SERVICE_PORT=${EXTERNAL_SERVICE_PORT} \
+          SERVICE_BINDING_ROOT=/bindings
+
+az spring-cloud app append-persistent-storage --mount-path /bindings/cacerts --name greeting-external-service-v2 \
+    --persistent-storage-type AzureFileVolume --share-name ${SHARE_NAME} --storage-name ${STORAGE_RESOURCE_NAME}
+```
+
+Deploy apps using build service
+
+```bash
+az spring app deploy --name greeting-external-service-v2 \
+    --builder default --source-path ${GREETING_EXTERNAL_SERVICE_V2_SOURCE}
+```
+
+### Standard/Basic Tier and Enterprise Tier
 Open the app and test it.
 
 ```bash
