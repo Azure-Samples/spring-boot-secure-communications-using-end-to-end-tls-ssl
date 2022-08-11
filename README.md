@@ -428,15 +428,17 @@ az spring storage add --resource-group ${RESOURCE_GROUP} --service ${SPRING_CLOU
    --account-name ${STORAGE_ACCOUNT_NAME} --account-key <your-storage-account-key>
 ```
 
-Create an app with your own persistent storage, please pay attention that the storage mount path **must** under `/bindings` and the environment variable `SERVICE_BINDING_ROOT` **must** be `/bindings`
+Create an app with `SERVICE_BINDING_ROOT` environment variables and append the Azure File to the app, please pay attention that the storage mount path **must** under `/bindings` and the environment variable `SERVICE_BINDING_ROOT` **must** be `/bindings`
 
 ```bash
 az spring app create --name greeting-external-service-v2 \
     --instance-count 1 --memory 2 --jvm-options='-Xms2048m -Xmx2048m -XX:+UnlockExperimentalVMOptions -XX:+UseCGroupMemoryLimitForHeap -XX:+UseG1GC -Djava.awt.headless=true -Dreactor.netty.http.server.accessLogEnabled=true' \
-    --persistent-storage ${STORAGE_JSON_FILE}
     --env EXTERNAL_SERVICE_ENDPOINT=${EXTERNAL_SERVICE_ENDPOINT} \
           EXTERNAL_SERVICE_PORT=${EXTERNAL_SERVICE_PORT} \
           SERVICE_BINDING_ROOT=/bindings
+
+az spring-cloud app append-persistent-storage --mount-path /bindings/cacerts --name greeting-external-service-v2 \
+    --persistent-storage-type AzureFileVolume --share-name ${SHARE_NAME} --storage-name ${STORAGE_RESOURCE_NAME}
 ```
 
 Deploy apps using build service

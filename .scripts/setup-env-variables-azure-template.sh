@@ -73,4 +73,4 @@ export STORAGE_ACCOUNT_NAME=enterprise-byos-demo
 export STORAGE_RESOURCE_NAME=enterprise-byos-demo
 export SHARE_NAME=cacerts
 export BINDING_TYPE_FILE=enterprise/type
-export STORAGE_JSON_FILE=enterprise/byos.json
+export GREETING_EXTERNAL_SERVICE_V2_SOURCE=greeting-external-service-v2
