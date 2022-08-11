@@ -66,3 +66,11 @@ export EXTERNAL_SERVICE_MANAGED_IDENTITY_NAME=external-service
 export EXTERNAL_SERVICE_MANAGED_IDENTITY_SERVICE_PRINCIPAL=
 # EXTERNAL_SERVICE_MANAGED_IDENTITY_RESOURCE_ID will be auto-set by the script
 export EXTERNAL_SERVICE_MANAGED_IDENTITY_RESOURCE_ID=
+
+# Enterprise Tier
+export CLIENT_SSL_CERTIFICATE_NAME_LOCAL=self-signed.pem
+export STORAGE_ACCOUNT_NAME=enterprise-byos-demo
+export STORAGE_RESOURCE_NAME=enterprise-byos-demo
+export SHARE_NAME=cacerts
+export BINDING_TYPE_FILE=enterprise/type
+export STORAGE_JSON_FILE=enterprise/byos.json

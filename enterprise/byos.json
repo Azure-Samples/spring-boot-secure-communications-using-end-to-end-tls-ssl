@@ -1,0 +1,13 @@
+{
+    "customPersistentDisks": [
+       {
+           "storageName": "enterprise-byos-demo",
+           "customPersistentDiskProperties": {
+               "type": "AzureFileVolume",
+               "shareName": "cacerts",
+               "mountPath": "/bindings/cacerts",
+               "readOnly": true
+           }
+       }
+    ]
+ }
