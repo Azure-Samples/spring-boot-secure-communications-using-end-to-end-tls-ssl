@@ -428,7 +428,7 @@ az spring storage add --resource-group ${RESOURCE_GROUP} --service ${SPRING_CLOU
    --account-name ${STORAGE_ACCOUNT_NAME} --account-key <your-storage-account-key>
 ```
 
-Create an app with `SERVICE_BINDING_ROOT` environment variables and append the Azure File to the app, please pay attention that the storage mount path **must** under `/bindings` and the environment variable `SERVICE_BINDING_ROOT` **must** be `/bindings`
+Create an app with `SERVICE_BINDING_ROOT` environment variable and append the Azure File to the app, please pay attention that the storage mount path **must** under `/bindings` and the environment variable `SERVICE_BINDING_ROOT` **must** be `/bindings`
 
 ```bash
 az spring app create --name greeting-external-service-v2 \
